@@ -17,7 +17,7 @@ class LessonSearchValidator extends AbstractValidator
     public function rules(): array
     {
         return [
-            self::F_Q => 'required',
+            self::F_Q => 'required|string|min:3|max:255',
         ];
     }
 }
