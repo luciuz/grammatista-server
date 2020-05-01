@@ -14,3 +14,9 @@ Install app
 ```
 composer install
 ```
+
+Code sniffer
+```
+vendor/bin/phpcs
+vendor/bin/phpcbf
+```
