@@ -7,24 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property integer $id
- * @property bool    $is_active
- * @property integer $vk_id
+ * @property integer $user_id
+ * @property integer $lesson_id
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
+ * @property Carbon  $deleted_at
  */
-class User extends Model
+class Bookmark extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'user';
+    protected $table = 'bookmark';
 
     /**
      * @var array
      */
     protected $fillable = [
-        'is_active',
-        'vk_id',
+        'user_id',
+        'lesson_id',
     ];
 
     /**
@@ -33,5 +34,6 @@ class User extends Model
     protected $dates = [
         'created_at',
         'updated_at',
+        'deleted_at',
     ];
 }
