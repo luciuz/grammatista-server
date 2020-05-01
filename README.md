@@ -13,6 +13,7 @@ docker-compose down -v
 Install app
 ```
 composer install
+php artisan migrate
 ```
 
 Code sniffer
