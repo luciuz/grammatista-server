@@ -8,6 +8,7 @@ services:
   app:
     volumes:
       - ./app:/var/www/html
+      - ./.docker/app/nginx/sites-available:/etc/nginx/sites-available
     environment:
       - "WEBROOT=/var/www/html/public"
       - "ENABLE_XDEBUG=1"
