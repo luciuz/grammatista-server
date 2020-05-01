@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', static function () {
+    return 'Welcome to Palestra API';
 });
 
 Route::get('/lesson/search', '\App\Api\Controllers\LessonController@actionSearch');
