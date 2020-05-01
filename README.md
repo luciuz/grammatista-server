@@ -9,3 +9,8 @@ docker-compose up -d
 docker-compose exec app bash
 docker-compose down -v
 ```
+
+Install app
+```
+composer install
+```

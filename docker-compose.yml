@@ -10,6 +10,7 @@ services:
       - ./app:/var/www/html
     environment:
       - "WEBROOT=/var/www/html/public"
+      - "ENABLE_XDEBUG=1"
     build:
       context: .docker/app
     ports:
