@@ -1,0 +1,27 @@
+version: '2'
+
+networks:
+  palestra-network:
+    external: true
+
+services:
+  app:
+    volumes:
+      - ./:/var/www/html
+    build:
+      context: .docker/app
+    ports:
+      - "8080:80"
+    networks:
+      - palestra-network
+
+  database:
+    image: postgres:10
+    environment:
+      - "POSTGRES_DB=palestra"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+    ports:
+      - "43542:5432"
+    networks:
+      - palestra-network
