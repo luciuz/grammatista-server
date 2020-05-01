@@ -26,13 +26,14 @@ class ResponseHelper
     }
 
     /**
-     * @param \Closure $closure
+     * @param callable $callable
+     * @param array    $params
      * @return Response
      */
-    public function run(\Closure $closure): Response
+    public function run(callable $callable, array $params): Response
     {
         try {
-            return $closure();
+            return $callable(...$params);
         } catch (ValidationException $e) {
             $errors = $e->errors();
             return new ValidationErrorResponse(compact('errors'));

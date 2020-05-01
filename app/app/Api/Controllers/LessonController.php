@@ -38,11 +38,11 @@ class LessonController extends BaseController
      */
     public function actionSearch(Request $request): Response
     {
-        return $this->responseHelper->run(function () use ($request) {
+        return $this->responseHelper->run(function ($request) {
             $data = $request->query->all();
             $this->lessonSearchValidator->validate($data);
 
             return new Response($data);
-        });
+        }, [$request]);
     }
 }
