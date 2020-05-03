@@ -2,11 +2,19 @@
 
 namespace App\Exceptions;
 
+use App\Api\Responses\InternalErrorResponse;
+use App\Api\Responses\UnauthorizedResponse;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -27,9 +35,19 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * @param Container $container
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function __construct(Container $container)
+    {
+        parent::__construct($container);
+        $this->logger = $container->make(LoggerInterface::class);
+    }
+
+    /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
+     * @param \Throwable $exception
      * @return void
      *
      * @throws \Exception
@@ -42,14 +60,27 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param \Illuminate\Http\Request $request
+     * @param \Throwable               $e
+     * @return \App\Api\Responses\Response
      *
      * @throws \Throwable
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e)
     {
-        return parent::render($request, $exception);
+        if ($e instanceof AuthenticationException) {
+            return new UnauthorizedResponse();
+        }
+
+        $this->logger->error(
+            'Exception in Handler::render.',
+            [
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine()
+            ]
+        );
+        return new InternalErrorResponse();
     }
 }

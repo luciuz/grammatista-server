@@ -29,3 +29,10 @@ services:
       - "43542:5432"
     networks:
       - grammatista-network
+
+  redis:
+    image: redis:4.0.2
+    ports:
+      - "6379:6379"
+    networks:
+      - grammatista-network

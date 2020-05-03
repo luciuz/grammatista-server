@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Lib\VkApi;
+namespace App\Services\Vk;
 
 /**
- * Class VkHelper
+ * Class VkService
  * @package App\Lib\VkApi
  */
-class VkHelper
+class VkService
 {
     /** @var string */
     private $clientSecret;

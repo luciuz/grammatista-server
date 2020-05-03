@@ -3,12 +3,12 @@
 namespace App\Validators;
 
 /**
- * Class LessonSearchValidator
+ * Class LessonGetValidator
  * @package App\Validators
  */
-class LessonSearchValidator extends AbstractValidator
+class LessonGetValidator extends AbstractValidator
 {
-    private const Q = 'q';
+    private const ID = 'id';
 
     /**
      * @return array
@@ -16,7 +16,7 @@ class LessonSearchValidator extends AbstractValidator
     public function rules(): array
     {
         return [
-            self::Q => 'required|string|min:3|max:255',
+            self::ID => 'required|int',
         ];
     }
 }

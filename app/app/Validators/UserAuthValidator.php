@@ -11,14 +11,11 @@ use Illuminate\Validation\Factory as ValidationFactory;
  */
 class UserAuthValidator extends AbstractValidator
 {
-    private const F_VK_USER_ID = 'vk_user_id';
-    private const F_SIGN = 'sign';
+    public const VK_USER_ID = 'vk_user_id';
+    public const SIGN       = 'sign';
 
     /** @var VkSignRule */
     private $vkSignRule;
-
-    /** @var array */
-    private $params;
 
     /**
      * @param ValidationFactory $validator
@@ -36,8 +33,8 @@ class UserAuthValidator extends AbstractValidator
     public function rules(): array
     {
         return [
-            self::F_VK_USER_ID => 'required|int',
-            self::F_SIGN       => ['required', 'string', $this->vkSignRule],
+            self::VK_USER_ID => 'required|int',
+            self::SIGN       => ['required', 'string', $this->vkSignRule],
         ];
     }
 

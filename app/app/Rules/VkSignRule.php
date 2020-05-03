@@ -2,21 +2,25 @@
 
 namespace App\Rules;
 
-use App\Lib\VkApi\VkHelper;
+use App\Services\Vk\VkService;
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * Class VkSignRule
+ * @package App\Rules
+ */
 class VkSignRule implements Rule
 {
-    /** @var VkHelper */
+    /** @var VkService */
     private $vkHelper;
 
     /** @var array */
     private $params;
 
     /**
-     * @param VkHelper $vkHelper
+     * @param VkService $vkHelper
      */
-    public function __construct(VkHelper $vkHelper)
+    public function __construct(VkService $vkHelper)
     {
         $this->vkHelper = $vkHelper;
     }
@@ -25,6 +29,7 @@ class VkSignRule implements Rule
      * @param string $attribute
      * @param mixed  $value
      * @return bool
+     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
      */
     public function passes($attribute, $value): bool
     {
