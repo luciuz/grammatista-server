@@ -14,6 +14,7 @@ Install app
 ```
 composer install
 php artisan migrate
+php artisan key:generate
 ```
 
 Code sniffer

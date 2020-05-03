@@ -12,7 +12,6 @@ class LessonSearchValidator extends AbstractValidator
 
     /**
      * @return array
-     *
      */
     public function rules(): array
     {

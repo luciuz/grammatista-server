@@ -39,7 +39,7 @@ class ResponseHelper
             return new ValidationErrorResponse(compact('errors'));
         } catch (\Throwable $e) {
             $this->logger->error(
-                'Exception in LessonController::actionSearch.',
+                'Exception in ResponseHelper::run.',
                 [
                     'code'    => $e->getCode(),
                     'message' => $e->getMessage(),

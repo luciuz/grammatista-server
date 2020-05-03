@@ -17,4 +17,6 @@ Route::get('/', static function () {
     return 'Welcome to Grammatista API';
 });
 
+Route::get('/user/auth', '\App\Api\Controllers\UserController@actionAuth');
+
 Route::get('/lesson/search', '\App\Api\Controllers\LessonController@actionSearch');

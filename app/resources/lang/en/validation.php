@@ -133,6 +133,7 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'invalid_sign' => 'Invalid sign.',
     ],
 
     /*
