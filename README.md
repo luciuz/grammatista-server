@@ -1,10 +1,10 @@
-# palestra-server
+# grammatista-server
 
 
 Docker commands
 
 ```
-docker network create palestra-network
+docker network create grammatista-network
 docker-compose up -d
 docker-compose exec app bash
 docker-compose down -v

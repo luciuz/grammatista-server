@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', static function () {
-    return 'Welcome to Palestra API';
+    return 'Welcome to Grammatista API';
 });
 
 Route::get('/lesson/search', '\App\Api\Controllers\LessonController@actionSearch');

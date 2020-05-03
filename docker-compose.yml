@@ -1,7 +1,7 @@
 version: '2'
 
 networks:
-  palestra-network:
+  grammatista-network:
     external: true
 
 services:
@@ -17,15 +17,15 @@ services:
     ports:
       - "8080:80"
     networks:
-      - palestra-network
+      - grammatista-network
 
   database:
     image: postgres:10
     environment:
-      - "POSTGRES_DB=palestra"
+      - "POSTGRES_DB=grammatista"
       - "POSTGRES_USER=postgres"
       - "POSTGRES_PASSWORD=postgres"
     ports:
       - "43542:5432"
     networks:
-      - palestra-network
+      - grammatista-network
