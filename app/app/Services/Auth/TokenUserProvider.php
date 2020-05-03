@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Services\SessionService;
+use App\Repositories\UserSessionRepository;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -14,16 +14,16 @@ class TokenUserProvider implements UserProvider
 {
     private const TOKEN_KEY = 'token';
 
-    /** @var SessionService */
-    private $sessionService;
+    /** @var UserSessionRepository */
+    private $userSessionRepository;
 
     /**
      * TokenUserProvider constructor.
-     * @param SessionService $sessionService
+     * @param UserSessionRepository $userSessionRepository
      */
-    public function __construct(SessionService $sessionService)
+    public function __construct(UserSessionRepository $userSessionRepository)
     {
-        $this->sessionService = $sessionService;
+        $this->userSessionRepository = $userSessionRepository;
     }
 
     /**
@@ -69,10 +69,10 @@ class TokenUserProvider implements UserProvider
     public function retrieveByCredentials(array $credentials): ?Authenticatable
     {
         $token = $credentials[self::TOKEN_KEY];
-        $sessionData = $this->sessionService->findSession($token);
-        if ($sessionData !== null) {
+        $userSession = $this->userSessionRepository->findByToken($token);
+        if ($userSession !== null) {
             $user = new AuthUser();
-            $user->setId($sessionData['app_user_id']);
+            $user->setId($userSession->user_id);
             return $user;
         }
 

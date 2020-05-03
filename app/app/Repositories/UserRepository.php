@@ -34,9 +34,9 @@ class UserRepository
      */
     public function create(array $attributes): ?User
     {
-        $user = new User($attributes);
-        if ($user->save()) {
-            return $user;
+        $model = new User($attributes);
+        if ($model->save()) {
+            return $model;
         }
 
         return null;

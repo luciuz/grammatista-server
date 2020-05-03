@@ -6,8 +6,9 @@ use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\ForbiddenResponse;
 use App\Api\Responses\Response;
 use App\Repositories\UserRepository;
-use App\Services\SessionService;
+use App\Repositories\UserSessionRepository;
 use App\Validators\UserAuthValidator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -20,8 +21,8 @@ class UserController extends BaseController
     /** @var UserRepository */
     private $userRepository;
 
-    /** @var SessionService */
-    private $sessionService;
+    /** @var UserSessionRepository */
+    private $userSessionRepository;
 
     /** @var ResponseHelper */
     private $responseHelper;
@@ -30,19 +31,19 @@ class UserController extends BaseController
     private $userAuthValidator;
 
     /**
-     * @param UserRepository    $userRepository
-     * @param SessionService    $sessionService
-     * @param ResponseHelper    $responseHelper
-     * @param UserAuthValidator $userAuthValidator
+     * @param UserRepository        $userRepository
+     * @param UserSessionRepository $userSessionRepository
+     * @param ResponseHelper        $responseHelper
+     * @param UserAuthValidator     $userAuthValidator
      */
     public function __construct(
         UserRepository $userRepository,
-        SessionService $sessionService,
+        UserSessionRepository $userSessionRepository,
         ResponseHelper $responseHelper,
         UserAuthValidator $userAuthValidator
     ) {
         $this->userRepository = $userRepository;
-        $this->sessionService = $sessionService;
+        $this->userSessionRepository = $userSessionRepository;
         $this->responseHelper = $responseHelper;
         $this->userAuthValidator = $userAuthValidator;
     }
@@ -58,7 +59,7 @@ class UserController extends BaseController
             $this->userAuthValidator->validate($data);
 
             $view = null;
-            $token = $this->sessionService->generateToken();
+            $token = $this->generateToken();
 
             $user = $this->userRepository->findByVkId($data['vk_user_id']);
             if (!$user) {
@@ -71,10 +72,24 @@ class UserController extends BaseController
                 return new ForbiddenResponse();
             }
 
-            $data['app_user_id'] = $user->id;
-            $this->sessionService->createSession($token, $data);
+            $session = [
+                'user_id'    => $user->id,
+                'token'      => $token,
+                'body'       => $data,
+                'expired_at' => Carbon::now()->addYears(10)
+            ];
+            $this->userSessionRepository->create($session);
 
             return new Response(compact('token', 'view'));
         }, [$request]);
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    private function generateToken(): string
+    {
+        return bin2hex(random_bytes(16));
     }
 }
