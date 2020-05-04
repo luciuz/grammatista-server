@@ -37,7 +37,7 @@ class ResponseHelper
         } catch (ValidationException $e) {
             $errors = $e->errors();
             return new ValidationErrorResponse(compact('errors'));
-        } catch (\Throwable $e) {
+        } catch (\Throwable $e) {dd($e);
             $this->logger->error(
                 'Exception in ResponseHelper::run.',
                 [

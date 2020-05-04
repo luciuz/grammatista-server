@@ -5,8 +5,11 @@ namespace App\Api\Controllers;
 use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\ForbiddenResponse;
 use App\Api\Responses\Response;
+use App\Api\Responses\ServiceUnavailableResponse;
 use App\Repositories\UserRepository;
 use App\Repositories\UserSessionRepository;
+use App\Services\Idempotent\IdempotentMutexException;
+use App\Services\Idempotent\IdempotentService;
 use App\Validators\UserAuthValidator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,28 +27,34 @@ class UserController extends BaseController
     /** @var UserSessionRepository */
     private $userSessionRepository;
 
-    /** @var ResponseHelper */
-    private $responseHelper;
-
     /** @var UserAuthValidator */
     private $userAuthValidator;
+
+    /** @var IdempotentService */
+    private $idempotentService;
+
+    /** @var ResponseHelper */
+    private $responseHelper;
 
     /**
      * @param UserRepository        $userRepository
      * @param UserSessionRepository $userSessionRepository
-     * @param ResponseHelper        $responseHelper
      * @param UserAuthValidator     $userAuthValidator
+     * @param IdempotentService     $idempotentService
+     * @param ResponseHelper        $responseHelper
      */
     public function __construct(
         UserRepository $userRepository,
         UserSessionRepository $userSessionRepository,
-        ResponseHelper $responseHelper,
-        UserAuthValidator $userAuthValidator
+        UserAuthValidator $userAuthValidator,
+        IdempotentService $idempotentService,
+        ResponseHelper $responseHelper
     ) {
         $this->userRepository = $userRepository;
         $this->userSessionRepository = $userSessionRepository;
-        $this->responseHelper = $responseHelper;
         $this->userAuthValidator = $userAuthValidator;
+        $this->idempotentService = $idempotentService;
+        $this->responseHelper = $responseHelper;
     }
 
     /**
@@ -58,30 +67,44 @@ class UserController extends BaseController
             $data = $request->all();
             $this->userAuthValidator->validate($data);
 
-            $route = null;
-            $token = $this->generateToken();
-
-            $user = $this->userRepository->findByVkId($data['vk_user_id']);
-            if (!$user) {
-                $user = $this->userRepository->create([
-                    'is_active' => true,
-                    'vk_id'     => $data['vk_user_id'],
-                ]);
-                $route = 'welcome/0';
-            } elseif ($user->is_active === false) {
-                return new ForbiddenResponse();
+            try {
+                $result = $this->idempotentService->runIdempotent($data['transaction_token'], [$this, 'auth'], [$data]);
+                return new Response($result);
+            } catch (IdempotentMutexException $e) {
+                return new ServiceUnavailableResponse();
             }
-
-            $session = [
-                'user_id'    => $user->id,
-                'token'      => $token,
-                'body'       => $data,
-                'expired_at' => Carbon::now()->addYears(10)
-            ];
-            $this->userSessionRepository->create($session);
-
-            return new Response(compact('token', 'route'));
         }, [$request]);
+    }
+
+    /**
+     * @param array $data
+     * @return ForbiddenResponse|array
+     * @throws \Exception
+     */
+    public function auth(array $data)
+    {
+        $route = null;
+        $token = $this->generateToken();
+
+        $user = $this->userRepository->findByVkId($data['vk_user_id']);
+        if (!$user) {
+            $user = $this->userRepository->create([
+                'is_active' => true,
+                'vk_id'     => $data['vk_user_id'],
+            ]);
+            $route = 'welcome/0';
+        } elseif ($user->is_active === false) {
+            return new ForbiddenResponse();
+        }
+
+        $session = [
+            'user_id'    => $user->id,
+            'token'      => $token,
+            'body'       => $data,
+            'expired_at' => Carbon::now()->addYears(10)
+        ];
+        $this->userSessionRepository->create($session);
+        return compact('token', 'route');
     }
 
     /**
