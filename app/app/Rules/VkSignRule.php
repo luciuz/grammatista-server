@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Services\Vk\VkService;
+use App\Lib\Vk\VkHelper;
 use Illuminate\Contracts\Validation\Rule;
 
 /**
@@ -11,16 +11,16 @@ use Illuminate\Contracts\Validation\Rule;
  */
 class VkSignRule implements Rule
 {
-    /** @var VkService */
+    /** @var VkHelper */
     private $vkHelper;
 
     /** @var array */
     private $params;
 
     /**
-     * @param VkService $vkHelper
+     * @param VkHelper $vkHelper
      */
-    public function __construct(VkService $vkHelper)
+    public function __construct(VkHelper $vkHelper)
     {
         $this->vkHelper = $vkHelper;
     }

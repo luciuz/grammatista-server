@@ -134,6 +134,7 @@ return [
             'rule-name' => 'custom-message',
         ],
         'invalid_sign' => 'Invalid sign.',
+        'invalid_uuidv4' => 'The :attribute must be a valid UUID v4.',
     ],
 
     /*

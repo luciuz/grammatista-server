@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
+use App\Lib\Vk\VkHelper;
 use App\Services\Auth\TokenAuthGuard;
 use App\Services\Auth\TokenUserProvider;
-use App\Services\Vk\VkService;
-use Illuminate\Auth\TokenGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind(VkService::class, static function ($app) {
-           return new VkService(config('vk.client_secret'));
+        $this->app->bind(VkHelper::class, static function ($app) {
+           return new VkHelper(config('vk.client_secret'));
         });
 
         Auth::extend('TokenAuthGuard', static function ($app) {
