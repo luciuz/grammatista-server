@@ -58,7 +58,7 @@ class UserController extends BaseController
             $data = $request->all();
             $this->userAuthValidator->validate($data);
 
-            $view = null;
+            $route = null;
             $token = $this->generateToken();
 
             $user = $this->userRepository->findByVkId($data['vk_user_id']);
@@ -67,7 +67,7 @@ class UserController extends BaseController
                     'is_active' => true,
                     'vk_id'     => $data['vk_user_id'],
                 ]);
-                $view = 'welcome';
+                $route = 'welcome/0';
             } elseif ($user->is_active === false) {
                 return new ForbiddenResponse();
             }
@@ -80,7 +80,7 @@ class UserController extends BaseController
             ];
             $this->userSessionRepository->create($session);
 
-            return new Response(compact('token', 'view'));
+            return new Response(compact('token', 'route'));
         }, [$request]);
     }
 

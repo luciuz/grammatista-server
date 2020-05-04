@@ -12,5 +12,5 @@ class AuthDto
     private $token;
 
     /** @var string|null */
-    private $view;
+    private $route;
 }
