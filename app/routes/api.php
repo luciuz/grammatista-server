@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/user/auth', '\App\Api\Controllers\UserController@actionAuth');
+
+Route::middleware('auth:api2')->group(static function () {
+    Route::get('/lesson/get', '\App\Api\Controllers\LessonController@actionGet');
+    Route::get('/lesson/search', '\App\Api\Controllers\LessonController@actionSearch');
 });
