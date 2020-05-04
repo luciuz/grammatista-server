@@ -46,7 +46,7 @@ class LessonController extends BaseController
     public function actionGet(Request $request): Response
     {
         return $this->responseHelper->run(function ($request) {
-            $data = $request->query->all();
+            $data = $request->all();
             $this->lessonGetValidator->validate($data);
 
             return new Response($data);
@@ -60,7 +60,7 @@ class LessonController extends BaseController
     public function actionSearch(Request $request): Response
     {
         return $this->responseHelper->run(function ($request) {
-            $data = $request->query->all();
+            $data = $request->all();
             $this->lessonSearchValidator->validate($data);
 
             return new Response($data);

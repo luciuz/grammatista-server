@@ -55,7 +55,7 @@ class UserController extends BaseController
     public function actionAuth(Request $request): Response
     {
         return $this->responseHelper->run(function ($request) {
-            $data = $request->query->all();
+            $data = $request->all();
             $this->userAuthValidator->validate($data);
 
             $view = null;
