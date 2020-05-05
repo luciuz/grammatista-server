@@ -43,7 +43,6 @@ up_app:
 ## =====================================================
 build_app:
 	cd $(APP_DIR) && cp $(APP_SUB_DIR)/.env.example $(APP_SUB_DIR)/.env
-	cd $(APP_DIR) && rm -rf $(APP_SUB_DIR)/vendor
 	cd $(APP_DIR) && docker-compose exec -T app composer install && \
 	cd $(APP_DIR) && docker-compose exec -T app php artisan migrate && \
 	cd $(APP_DIR) && docker-compose exec -T app php artisan cache:clear && \
