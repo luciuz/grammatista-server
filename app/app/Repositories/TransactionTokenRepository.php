@@ -22,15 +22,15 @@ class TransactionTokenRepository
     }
 
     /**
-     * @param string $token
-     * @param array  $result
+     * @param string     $token
+     * @param array|null $result
      * @return TransactionToken
      */
-    public function createByTokenWithResult(string $token, array $result): TransactionToken
+    public function createByTokenWithResult(string $token, ?array $result): TransactionToken
     {
         return $this->create([
             'transaction_token' => $token,
-            'result' => $result,
+            'result'            => $result,
         ]);
     }
 

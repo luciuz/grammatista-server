@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
- * @property string  $transaction_token
- * @property array   $result
- * @property Carbon  $created_at
+ * @property integer    $id
+ * @property string     $transaction_token
+ * @property array|null $result
+ * @property Carbon     $created_at
  */
 class TransactionToken extends Model
 {

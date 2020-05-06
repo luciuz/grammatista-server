@@ -20,7 +20,7 @@ class CreateTransactionToken extends Migration
         Schema::create(self::TABLE, static function (Blueprint $table) {
             $table->id();
             $table->uuid('transaction_token');
-            $table->jsonb('result');
+            $table->jsonb('result')->nullable();
             $table->timestamp('created_at')->nullable();
 
             $table->unique('transaction_token', self::TRANSACTION_TOKEN_KEY);
