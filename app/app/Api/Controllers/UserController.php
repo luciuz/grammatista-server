@@ -83,7 +83,7 @@ class UserController extends BaseController
      */
     public function auth(array $data)
     {
-        $route = null;
+        $view = null;
         $token = $this->generateToken();
 
         $user = $this->userRepository->findByVkId($data['vk_user_id']);
@@ -92,7 +92,7 @@ class UserController extends BaseController
                 'is_active' => true,
                 'vk_id'     => $data['vk_user_id'],
             ]);
-            $route = 'welcome/0';
+            $view = 'welcome';
         } elseif ($user->is_active === false) {
             return new ForbiddenResponse();
         }
@@ -104,7 +104,7 @@ class UserController extends BaseController
             'expired_at' => Carbon::now()->addYears(10)
         ];
         $this->userSessionRepository->create($session);
-        return compact('token', 'route');
+        return compact('token', 'view');
     }
 
     /**
