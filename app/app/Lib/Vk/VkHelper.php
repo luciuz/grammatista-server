@@ -41,7 +41,7 @@ class VkHelper
                 continue;
             }
 
-            $signParams[$name] = $value;
+            $signParams[$name] = $value ?? '';
         }
         ksort($signParams);
         $query = http_build_query($signParams);
