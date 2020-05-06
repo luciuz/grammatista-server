@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property bool    $is_complete
+ * @property integer $lesson_id
  * @property integer $test_id
  * @property integer $user_id
  * @property array   $question
@@ -30,6 +31,7 @@ class Variant extends Model
      */
     protected $fillable = [
         'is_complete',
+        'lesson_id',
         'test_id',
         'user_id',
         'question',

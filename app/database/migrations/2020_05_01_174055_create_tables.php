@@ -12,13 +12,13 @@ class CreateTables extends Migration
     private const TABLE_VARIANT  = 'variant';
     private const TABLE_BOOKMARK = 'bookmark';
 
-    private const FK_LESSON_USER    = 'fk_lesson_user';
-    private const FK_TEST_USER      = 'fk_test_user';
-    private const FK_TEST_LESSON    = 'fk_test_lesson';
-    private const FK_USER_TEST_TEST = 'fk_user_test_test';
-    private const FK_USER_TEST_USER = 'fk_user_test_user';
-    private const FK_BOOKMARK_USER   = 'fk_bookmark_user';
-    private const FK_BOOKMARK_LESSON = 'fk_bookmark_lesson';
+    private const FK_LESSON_USER      = 'fk_lesson_user';
+    private const FK_TEST_LESSON      = 'fk_test_lesson';
+    private const FK_USER_TEST_LESSON = 'fk_user_test_lesson';
+    private const FK_USER_TEST_TEST   = 'fk_user_test_test';
+    private const FK_USER_TEST_USER   = 'fk_user_test_user';
+    private const FK_BOOKMARK_USER    = 'fk_bookmark_user';
+    private const FK_BOOKMARK_LESSON  = 'fk_bookmark_lesson';
 
     private const EN = 'en';
     private const RU = 'ru';
@@ -83,7 +83,6 @@ class CreateTables extends Migration
         Schema::create(self::TABLE_TEST, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lesson_id');
-            $table->unsignedBigInteger('user_id');
             $table->enum('locale', $this->getLocales());
             $table->jsonb('question');
             $table->jsonb('answer');
@@ -93,8 +92,6 @@ class CreateTables extends Migration
 
             $table->foreign('lesson_id', self::FK_TEST_LESSON)
                 ->references('id')->on(self::TABLE_LESSON);
-            $table->foreign('user_id', self::FK_TEST_USER)
-                ->references('id')->on(self::TABLE_USER);
         });
     }
 
@@ -103,6 +100,7 @@ class CreateTables extends Migration
         Schema::create(self::TABLE_VARIANT, static function (Blueprint $table) {
             $table->id();
             $table->boolean('is_complete');
+            $table->unsignedBigInteger('lesson_id');
             $table->unsignedBigInteger('test_id');
             $table->unsignedBigInteger('user_id');
             $table->jsonb('question');
@@ -112,6 +110,8 @@ class CreateTables extends Migration
             $table->timestamp('finished_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
 
+            $table->foreign('lesson_id', self::FK_USER_TEST_LESSON)
+                ->references('id')->on(self::TABLE_LESSON);
             $table->foreign('test_id', self::FK_USER_TEST_TEST)
                 ->references('id')->on(self::TABLE_TEST);
             $table->foreign('user_id', self::FK_USER_TEST_USER)

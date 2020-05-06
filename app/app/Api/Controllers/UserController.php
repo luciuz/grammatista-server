@@ -2,16 +2,19 @@
 
 namespace App\Api\Controllers;
 
+use App\Api\Dtos\AuthDto;
 use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\ForbiddenResponse;
 use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
+use App\Exceptions\ForbiddenException;
 use App\Repositories\UserRepository;
 use App\Repositories\UserSessionRepository;
 use App\Services\Idempotent\IdempotentMutexException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\UserAuthValidator;
 use Carbon\Carbon;
+use Facade\FlareClient\Http\Exceptions\NotFound;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -58,6 +61,7 @@ class UserController extends BaseController
     }
 
     /**
+     * @see AuthDto
      * @param Request $request
      * @return Response
      */
@@ -72,16 +76,18 @@ class UserController extends BaseController
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
+            } catch (ForbiddenException $e) {
+                return new ForbiddenResponse();
             }
         }, [$request]);
     }
 
     /**
      * @param array $data
-     * @return ForbiddenResponse|array
+     * @return array
      * @throws \Exception
      */
-    public function auth(array $data)
+    public function auth(array $data): array
     {
         $view = null;
         $token = $this->generateToken();
@@ -94,7 +100,7 @@ class UserController extends BaseController
             ]);
             $view = 'welcome';
         } elseif ($user->is_active === false) {
-            return new ForbiddenResponse();
+            throw new ForbiddenException('User blocked.');
         }
 
         $session = [
