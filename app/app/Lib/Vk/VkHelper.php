@@ -2,8 +2,6 @@
 
 namespace App\Lib\Vk;
 
-use Psr\Log\LoggerInterface;
-
 /**
  * Class VkService
  * @package App\Lib\Vk
@@ -28,7 +26,6 @@ class VkHelper
      */
     public function checkSign(array $params, string $sign): bool
     {
-        app(LoggerInterface::class)->error($this->generateSign($params));
         return $this->generateSign($params) === $sign;
     }
 
