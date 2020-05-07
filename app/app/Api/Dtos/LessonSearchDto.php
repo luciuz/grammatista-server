@@ -12,7 +12,7 @@ class LessonSearchDto
     private $list;
 
     /** @var int|null */
-    private $totalRows;
+    private $rowsLeft;
 
     /** @var int|null */
     private $maxId;

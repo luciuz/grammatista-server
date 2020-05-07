@@ -39,10 +39,11 @@ class LessonService
         $raw = $this->lessonRepository->search($q, $maxId, $userId, $size);
 
         $list = [];
-        $totalRows = null;
+        $rowsLeft = null;
         $maxId = null;
         if (count($raw) > 0) {
             $totalRows = reset($raw)->total_rows;
+            $rowsLeft = $totalRows - count($raw);
             $maxId = last($raw)->id;
             foreach ($raw as $item) {
                 $list[] = [
@@ -53,6 +54,6 @@ class LessonService
                 ];
             }
         }
-        return compact('list', 'totalRows', 'maxId');
+        return compact('list', 'rowsLeft', 'maxId');
     }
 }
