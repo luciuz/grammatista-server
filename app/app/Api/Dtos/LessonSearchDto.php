@@ -11,7 +11,7 @@ class LessonSearchDto
     /** @var LessonItemDto[] */
     private $list;
 
-    /** @var int */
+    /** @var int|null */
     private $totalRows;
 
     /** @var int|null */
