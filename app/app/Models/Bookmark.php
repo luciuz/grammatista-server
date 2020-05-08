@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $user_id
  * @property integer $lesson_id
  * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property Carbon  $deleted_at
  */
 class Bookmark extends Model
 {
@@ -33,7 +31,22 @@ class Bookmark extends Model
      */
     protected $dates = [
         'created_at',
-        'updated_at',
-        'deleted_at',
     ];
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * @inheritDoc
+     */
+    public static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(static function ($model) {
+            $model->created_at = $model->freshTimestamp();
+        });
+    }
 }

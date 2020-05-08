@@ -125,8 +125,7 @@ class CreateTables extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('lesson_id');
-            $table->timestamps();
-            $table->timestamp('deleted_at')->nullable();
+            $table->timestamp('created_at')->nullable();
 
             $table->foreign('user_id', self::FK_BOOKMARK_USER)
                 ->references('id')->on(self::TABLE_USER);
