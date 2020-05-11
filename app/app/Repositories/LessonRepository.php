@@ -76,15 +76,16 @@ SQL);
         $query = \DB::table($lesson)
             ->leftJoin($bookmark, static function (JoinClause $join) use ($bookmark, $lesson, $userId) {
                 $join->on($bookmark . '.lesson_id', '=', $lesson . '.id')
-                    ->where($bookmark . '.user_id', $userId)
-                    ->whereNull($bookmark . '.deleted_at');
+                    ->where($bookmark . '.user_id', $userId);
             })
             ->leftJoin($variant, static function (JoinClause $join) use ($variant, $lesson, $userId) {
                 $join->on($variant . '.lesson_id', '=', $lesson . '.id')
                     ->where($variant . '.user_id', $userId)
-                    ->where($variant . '.is_complete', true);
+                    ->where($variant . '.is_complete', true)
+                    ->whereNull($variant . '.deleted_at');
             })
             ->where($lesson . '.title', 'ilike', '%' . $q . '%')
+            ->whereNull($lesson . '.deleted_at')
             ->orderBy($lesson . '.id', 'desc')
             ->limit($size);
         if ($maxId !== null) {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property integer $id
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Variant extends Model
 {
+    use SoftDeletes;
+
     /**
      * @var string
      */
