@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property integer $id
  * @property integer $lesson_id
- * @property string  $locale
  * @property array   $question
  * @property array   $answer
  * @property array   $duration Duration in seconds.
@@ -31,7 +30,6 @@ class Test extends Model
      */
     protected $fillable = [
         'lesson_id',
-        'locale',
         'question',
         'answer',
         'duration',

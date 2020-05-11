@@ -11,7 +11,7 @@ abstract class AbstractTag
     /**
      * @return string
      */
-    abstract public function getTagName(): string;
+    abstract public static function getTagName(): string;
 
     /**
      * @param string $line

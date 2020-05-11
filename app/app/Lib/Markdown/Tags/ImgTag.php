@@ -14,7 +14,7 @@ class ImgTag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'i';
     }
@@ -31,7 +31,7 @@ class ImgTag extends AbstractTag
         $alt = $match[1];
         $link = $match[2];
         $this->tail = $match[3] ?? null;
-        return [$this->getTagName() => compact('alt', 'link')];
+        return [self::getTagName() => compact('alt', 'link')];
     }
 
     /**

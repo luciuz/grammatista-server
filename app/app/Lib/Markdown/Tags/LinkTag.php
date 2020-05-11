@@ -14,7 +14,7 @@ class LinkTag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'a';
     }
@@ -31,7 +31,7 @@ class LinkTag extends AbstractTag
         $text = $match[1];
         $link = $match[2];
         $this->tail = $match[3] ?? null;
-        return [$this->getTagName() => compact('text', 'link')];
+        return [self::getTagName() => compact('text', 'link')];
     }
 
     /**

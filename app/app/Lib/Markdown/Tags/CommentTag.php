@@ -11,7 +11,7 @@ class CommentTag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'c';
     }
@@ -25,6 +25,6 @@ class CommentTag extends AbstractTag
         if (!preg_match('~^\[\/\/\]: # \(([^\)]+)\)$~', $line, $match)) {
             return null;
         }
-        return [$this->getTagName() => $match[1]];
+        return [self::getTagName() => $match[1]];
     }
 }

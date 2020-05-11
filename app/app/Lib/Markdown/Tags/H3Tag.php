@@ -11,7 +11,7 @@ class H3Tag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'h3';
     }
@@ -22,6 +22,6 @@ class H3Tag extends AbstractTag
      */
     public function parse(string $line): array
     {
-        return [$this->getTagName() => substr($line, 4)];
+        return [self::getTagName() => substr($line, 4)];
     }
 }

@@ -19,6 +19,9 @@ use App\Lib\Markdown\Tags\TextTag;
  */
 class MarkdownParser
 {
+    /** @var CommentTag */
+    private $commentTag;
+
     /** @var TextTag */
     private $textTag;
 
@@ -121,7 +124,7 @@ class MarkdownParser
             return;
         }
         if ($tag->isSet()) {
-            $this->subResult[$tag->getTagName()][] = reset($result);
+            $this->subResult[$tag::getTagName()][] = reset($result);
         } else {
             $this->result[] = $result;
         }

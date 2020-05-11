@@ -11,7 +11,7 @@ class ListTag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'l';
     }
@@ -22,7 +22,7 @@ class ListTag extends AbstractTag
      */
     public function parse(string $line): array
     {
-        return [$this->getTagName() => substr($line, 2)];
+        return [self::getTagName() => substr($line, 2)];
     }
 
     /**

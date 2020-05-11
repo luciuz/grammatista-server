@@ -11,7 +11,7 @@ class TextTag extends AbstractTag
     /**
      * @return string
      */
-    public function getTagName(): string
+    public static function getTagName(): string
     {
         return 'p';
     }
@@ -23,7 +23,7 @@ class TextTag extends AbstractTag
     public function parse(string $line): ?array
     {
         if ($line) {
-            return [$this->getTagName() => $line];
+            return [self::getTagName() => $line];
         }
         return null;
     }

@@ -83,7 +83,6 @@ class CreateTables extends Migration
         Schema::create(self::TABLE_TEST, function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lesson_id');
-            $table->enum('locale', $this->getLocales());
             $table->jsonb('question');
             $table->jsonb('answer');
             $table->unsignedInteger('duration');
@@ -105,6 +104,7 @@ class CreateTables extends Migration
             $table->unsignedBigInteger('user_id');
             $table->jsonb('question');
             $table->jsonb('answer');
+            $table->jsonb('user_answer');
             $table->timestamps();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('finished_at')->nullable();

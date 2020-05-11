@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\DataAssemblers\ImportLessonDataAssembler;
 use App\Lib\FileParser;
 use App\Lib\Markdown\MarkdownParser;
 use Illuminate\Console\Command;
@@ -32,19 +33,25 @@ class ImportLessonCommand extends Command
     /** @var MarkdownParser */
     private $markdownParser;
 
+    /** @var ImportLessonDataAssembler */
+    private $dataAssembler;
+
     /**
      * Create a new command instance.
      *
-     * @param FileParser     $fileParser
-     * @param MarkdownParser $markdownParser
+     * @param FileParser                $fileParser
+     * @param MarkdownParser            $markdownParser
+     * @param ImportLessonDataAssembler $dataAssembler
      */
     public function __construct(
         FileParser $fileParser,
-        MarkdownParser $markdownParser
+        MarkdownParser $markdownParser,
+        ImportLessonDataAssembler $dataAssembler
     ) {
         parent::__construct();
         $this->fileParser = $fileParser;
         $this->markdownParser = $markdownParser;
+        $this->dataAssembler = $dataAssembler;
     }
 
     /**
@@ -60,7 +67,10 @@ class ImportLessonCommand extends Command
         $this->fileParser->run();
         $this->markdownParser->pickSubResult();
         $result = $this->markdownParser->getResult();
-        dd($result);
+
+        $data = $this->dataAssembler->make($result);
+
+        dd($data);
     }
 
     /**
@@ -69,9 +79,6 @@ class ImportLessonCommand extends Command
     protected function getFilename(): string
     {
         $filename = $this->argument('filename');
-//        if (strpos('/', $filename) !== 0) {
-//            $filename = __DIR__ . $filename;
-//        } dd($filename);
         if (!file_exists($filename)) {
             throw new \RuntimeException(sprintf('File "%s" does not exist.', $filename));
         }
