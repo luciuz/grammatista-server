@@ -26,15 +26,12 @@ class UserSessionRepository
 
     /**
      * @param array $attributes
-     * @return UserSession|null
+     * @return UserSession
      */
-    public function create(array $attributes): ?UserSession
+    public function create(array $attributes): UserSession
     {
         $model = new UserSession($attributes);
-        if ($model->save()) {
-            return $model;
-        }
-
-        return null;
+        $model->save();
+        return $model;
     }
 }

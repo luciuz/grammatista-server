@@ -14,7 +14,7 @@ class Locale
     /**
      * @return array|string[]
      */
-    public function getAll(): array
+    public static function getAll(): array
     {
         return [
             self::RU,

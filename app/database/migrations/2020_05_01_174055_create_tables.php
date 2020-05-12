@@ -65,7 +65,7 @@ class CreateTables extends Migration
     {
         Schema::create(self::TABLE_LESSON, function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->enum('locale', $this->getLocales());
             $table->text('title');
             $table->jsonb('body');

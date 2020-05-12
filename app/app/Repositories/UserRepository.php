@@ -30,15 +30,12 @@ class UserRepository
 
     /**
      * @param array $attributes
-     * @return User|null
+     * @return User
      */
-    public function create(array $attributes): ?User
+    public function create(array $attributes): User
     {
         $model = new User($attributes);
-        if ($model->save()) {
-            return $model;
-        }
-
-        return null;
+        $model->save();
+        return $model;
     }
 }

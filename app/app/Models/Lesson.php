@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property integer $id
- * @property integer $user_id Author.
- * @property string  $locale
- * @property string  $title
- * @property array   $body
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property Carbon  $published_at
- * @property Carbon  $deleted_at
+ * @property integer      $id
+ * @property integer|null $user_id Author.
+ * @property string       $locale
+ * @property string       $title
+ * @property array        $body
+ * @property Carbon       $created_at
+ * @property Carbon       $updated_at
+ * @property Carbon       $published_at
+ * @property Carbon       $deleted_at
  */
 class Lesson extends Model
 {

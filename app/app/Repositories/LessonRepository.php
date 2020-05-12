@@ -25,16 +25,13 @@ class LessonRepository
 
     /**
      * @param array $attributes
-     * @return Lesson|null
+     * @return Lesson
      */
-    public function create(array $attributes): ?Lesson
+    public function create(array $attributes): Lesson
     {
         $model = new Lesson($attributes);
-        if ($model->save()) {
-            return $model;
-        }
-
-        return null;
+        $model->save();
+        return $model;
     }
 
     /**
