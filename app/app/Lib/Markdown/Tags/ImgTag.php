@@ -29,9 +29,9 @@ class ImgTag extends AbstractTag
             return null;
         }
         $alt = $match[1];
-        $link = $match[2];
+        $src = $match[2];
         $this->tail = $match[3] ?? null;
-        return [self::getTagName() => compact('alt', 'link')];
+        return [self::getTagName() => compact('alt', 'src')];
     }
 
     /**
