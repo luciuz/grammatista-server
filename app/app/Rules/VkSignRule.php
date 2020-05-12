@@ -29,7 +29,7 @@ class VkSignRule implements Rule
      * @param string $attribute
      * @param mixed  $value
      * @return bool
-     * phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
+     * @phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
      */
     public function passes($attribute, $value): bool
     {
