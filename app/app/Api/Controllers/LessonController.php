@@ -4,8 +4,8 @@ namespace App\Api\Controllers;
 
 use App\Api\Dtos\LessonSearchDto;
 use App\Api\Helpers\ResponseHelper;
+use App\Api\Responses\NotFoundResponse;
 use App\Api\Responses\Response;
-use App\Repositories\LessonRepository;
 use App\Services\LessonService;
 use App\Validators\LessonGetValidator;
 use App\Validators\LessonSearchValidator;
@@ -49,6 +49,7 @@ class LessonController extends BaseController
     }
 
     /**
+     * @see LessonRichDto
      * @param Request $request
      * @return Response
      */
@@ -58,7 +59,12 @@ class LessonController extends BaseController
             $data = $request->all();
             $this->lessonGetValidator->validate($data);
 
-            return new Response($data);
+            $result = $this->lessonService->getRichById($data['id'], \Auth::user()->getAuthIdentifier());
+            if ($result === null) {
+                return new NotFoundResponse();
+            }
+
+            return new Response($result);
         }, [$request]);
     }
 

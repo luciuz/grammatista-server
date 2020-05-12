@@ -28,6 +28,14 @@ class LessonService
     }
 
     /**
+     * @return LessonRepository
+     */
+    public function getRepository(): LessonRepository
+    {
+        return $this->lessonRepository;
+    }
+
+    /**
      * @param string   $q
      * @param int|null $maxId
      * @param int      $userId
@@ -47,13 +55,34 @@ class LessonService
             $maxId = last($raw)->id;
             foreach ($raw as $item) {
                 $list[] = [
-                    'id' => $item->id,
-                    'title' => $item->title,
-                    'is_bookmark' => (bool) $item->bookmark_id,
-                    'is_complete' => (bool) $item->complete_id,
+                    'id'         => $item->id,
+                    'title'      => $item->title,
+                    'isBookmark' => (bool) $item->bookmark_id,
+                    'isComplete' => (bool) $item->complete_id,
                 ];
             }
         }
         return compact('list', 'rowsLeft', 'maxId');
+    }
+
+    /**
+     * @param int $id
+     * @param int $userId
+     * @return array|null
+     */
+    public function getRichById(int $id, int $userId): ?array
+    {
+        $raw = $this->lessonRepository->getRichById($id, $userId);
+        if ($raw === null) {
+            return null;
+        }
+
+        return [
+            'id'         => $raw['id'],
+            'title'      => $raw['title'],
+            'body'       => json_decode($raw['body']),
+            'isBookmark' => (bool) $raw['bookmark_id'],
+            'isComplete' => (bool) $raw['complete_id'],
+        ];
     }
 }
