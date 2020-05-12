@@ -176,7 +176,7 @@ class MarkdownParser
                 }
             } elseif (isset($path['default'])) {
                 $next = false;
-                $tag = $path;
+                $tag = $path['default'];
             }
         } while ($next);
         return $tag;

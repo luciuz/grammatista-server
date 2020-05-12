@@ -2,10 +2,10 @@
 
 namespace App\DataAssemblers;
 
-use App\Lib\Markdown\Tags\CommentTag;
-use App\Lib\Markdown\Tags\ListNumberedTag;
-use App\Lib\Markdown\Tags\ListTag;
-
+/**
+ * Class ImportLessonDataAssembler
+ * @package App\DataAssemblers
+ */
 class ImportLessonDataAssembler
 {
     private const SECTION_TEMPLATE = '#####%s#####';
@@ -15,11 +15,20 @@ class ImportLessonDataAssembler
     private const SECTION_TEST    = 'test';
     private const SECTION_ANSWER  = 'answer';
 
+    private const SECTION_TAG  = 'c';
+    private const OPTIONS_TAG  = 'l';
+    private const QUESTION_TAG  = 'h3';
+    private const QUESTION_OPTIONS_TAG  = 'ln';
+    private const ANSWERS_TAG  = 'ln';
+
     /** @var array */
     private $result;
 
     /** @var string */
     private $section;
+
+    /** @var array */
+    private $currentQuestion;
 
     /**
      * @param array $lines
@@ -30,7 +39,16 @@ class ImportLessonDataAssembler
         $this->result = [];
         $this->section = null;
         foreach ($lines as $line) {
-            if ($this->continueFromOptions($line)
+            if (
+                $this->checkSection($line, self::SECTION_OPTIONS)
+                || $this->checkSection($line, self::SECTION_LESSON)
+                || $this->checkSection($line, self::SECTION_TEST)
+                || $this->checkSection($line, self::SECTION_ANSWER)
+            ) {
+                continue;
+            }
+            if (
+                $this->continueFromOptions($line)
                 || $this->continueFromLesson($line)
                 || $this->continueFromTest($line)
                 || $this->continueFromAnswer($line)
@@ -43,6 +61,23 @@ class ImportLessonDataAssembler
     }
 
     /**
+     * @param array  $line
+     * @param string $section
+     * @return bool
+     */
+    private function checkSection(array $line, string $section): bool
+    {
+        $key = array_key_first($line);
+        $value = $line[$key];
+        if ($key === self::SECTION_TAG && $value === $this->wrapSection($section)) {
+            $this->section = $section;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param array $line
      * @return bool
      */
@@ -50,12 +85,7 @@ class ImportLessonDataAssembler
     {
         $key = array_key_first($line);
         $value = $line[$key];
-        if ($value === $this->wrapSection(self::SECTION_OPTIONS) && $key === CommentTag::getTagName()) {
-            $this->section = self::SECTION_OPTIONS;
-            return true;
-        }
-
-        if ($this->section === self::SECTION_OPTIONS && $key === ListTag::getTagName()) {
+        if ($this->section === self::SECTION_OPTIONS && $key === self::OPTIONS_TAG) {
             foreach ($value as $items) {
                 [$param, $val] = explode('=', $items);
                 $this->result[$this->section][$param] = $val;
@@ -73,7 +103,12 @@ class ImportLessonDataAssembler
      */
     private function continueFromLesson(array $line): bool
     {
-        return $this->continueFromMarkdown($line, self::SECTION_LESSON);
+        if ($this->section === self::SECTION_LESSON) {
+            $this->result[$this->section]['list'][] = $line;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -82,25 +117,16 @@ class ImportLessonDataAssembler
      */
     private function continueFromTest(array $line): bool
     {
-        return $this->continueFromMarkdown($line, self::SECTION_TEST);
-    }
-
-    /**
-     * @param array  $line
-     * @param string $section
-     * @return bool
-     */
-    private function continueFromMarkdown(array $line, string $section): bool
-    {
         $key = array_key_first($line);
         $value = $line[$key];
-        if ($value === $this->wrapSection($section) && $key === CommentTag::getTagName()) {
-            $this->section = $section;
-            return true;
-        }
-
-        if ($this->section === $section) {
-            $this->result[$this->section]['list'][] = $line;
+        if ($this->section === self::SECTION_TEST) {
+            if ($key === self::QUESTION_TAG) {
+                $this->currentQuestion = [];
+                $this->currentQuestion['title'] = $value;
+            } elseif ($key === self::QUESTION_OPTIONS_TAG) {
+                $this->currentQuestion['options'] = $value;
+                $this->result[$this->section]['list'][] = $this->currentQuestion;
+            }
             return true;
         }
 
@@ -115,12 +141,7 @@ class ImportLessonDataAssembler
     {
         $key = array_key_first($line);
         $value = $line[$key];
-        if ($value === $this->wrapSection(self::SECTION_ANSWER) && $key === CommentTag::getTagName()) {
-            $this->section = self::SECTION_ANSWER;
-            return true;
-        }
-
-        if ($this->section === self::SECTION_ANSWER && $key === ListNumberedTag::getTagName()) {
+        if ($this->section === self::SECTION_ANSWER && $key === self::ANSWERS_TAG) {
             foreach ($value as $items) {
                 $answers = explode(',', $items);
                 $this->result[$this->section]['list'][] = $answers;
