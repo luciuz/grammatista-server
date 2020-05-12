@@ -28,8 +28,7 @@ class LinkTag extends AbstractTag
         if (!preg_match('~^\[([^\]]+)\]\(([^\)]+)\)(.+)?$~', $line, $match)) {
             return null;
         }
-        $text = $match[1];
-        $link = $match[2];
+        [, $text, $link] = $match;
         $this->tail = $match[3] ?? null;
         return [self::getTagName() => compact('text', 'link')];
     }

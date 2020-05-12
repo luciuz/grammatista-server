@@ -28,8 +28,7 @@ class ImgTag extends AbstractTag
         if (!preg_match('~^!\[([^\]]+)\]\(([^\)]+)\)(.+)?~', $line, $match)) {
             return null;
         }
-        $alt = $match[1];
-        $src = $match[2];
+        [, $alt, $src] = $match;
         $this->tail = $match[3] ?? null;
         return [self::getTagName() => compact('alt', 'src')];
     }
