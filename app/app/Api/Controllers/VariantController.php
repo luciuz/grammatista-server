@@ -4,6 +4,7 @@ namespace App\Api\Controllers;
 
 use App\Api\Dtos\IdDto;
 use App\Api\Dtos\VariantDto;
+use App\Api\Dtos\VariantFinishDto;
 use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\BadRequestResponse;
 use App\Api\Responses\ForbiddenResponse;
@@ -114,9 +115,9 @@ class VariantController extends BaseController
     }
 
     /**
+     * @see VariantDto
      * @param Request $request
      * @return Response
-     * @see VariantDto
      */
     public function actionGet(Request $request): Response
     {
@@ -138,6 +139,7 @@ class VariantController extends BaseController
     }
 
     /**
+     * @see VariantFinishDto
      * @param Request $request
      * @return Response
      */
@@ -221,8 +223,9 @@ class VariantController extends BaseController
             }
             next($userAnswerList);
         }
+        $isComplete = ($errors <= self::MAX_ERRORS);
         $params = [
-            'is_complete' => ($errors <= self::MAX_ERRORS),
+            'is_complete' => $isComplete,
             'user_answer' => $userAnswer,
             'result' => [
                 'list' => $result
@@ -231,6 +234,6 @@ class VariantController extends BaseController
         ];
 
         $this->variantRepository->update($variant, $params);
-        return null;
+        return compact('isComplete');
     }
 }
