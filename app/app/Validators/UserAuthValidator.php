@@ -12,9 +12,9 @@ use Illuminate\Validation\Factory as ValidationFactory;
  */
 class UserAuthValidator extends AbstractValidator
 {
-    public const VK_USER_ID        = 'vk_user_id';
-    public const SIGN              = 'sign';
-    public const TRANSACTION_TOKEN = 'transaction_token';
+    private const VK_USER_ID        = 'vk_user_id';
+    private const SIGN              = 'sign';
+    private const TRANSACTION_TOKEN = 'transactionToken';
 
     /** @var VkSignRule */
     private $vkSignRule;

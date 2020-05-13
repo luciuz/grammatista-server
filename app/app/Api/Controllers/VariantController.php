@@ -106,7 +106,7 @@ class VariantController extends BaseController
             $userId = \Auth::user()->getAuthIdentifier();
             try {
                 $result = $this->idempotentService
-                    ->runIdempotent($data['transaction_token'], [$this, 'create'], [$test, $userId]);
+                    ->runIdempotent($data['transactionToken'], [$this, 'create'], [$test, $userId]);
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();

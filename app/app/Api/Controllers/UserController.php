@@ -14,7 +14,6 @@ use App\Services\Idempotent\IdempotentMutexException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\UserAuthValidator;
 use Carbon\Carbon;
-use Facade\FlareClient\Http\Exceptions\NotFound;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
@@ -72,7 +71,7 @@ class UserController extends BaseController
             $this->userAuthValidator->validate($data);
 
             try {
-                $result = $this->idempotentService->runIdempotent($data['transaction_token'], [$this, 'auth'], [$data]);
+                $result = $this->idempotentService->runIdempotent($data['transactionToken'], [$this, 'auth'], [$data]);
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
