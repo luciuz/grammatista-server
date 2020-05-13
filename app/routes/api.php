@@ -19,4 +19,6 @@ Route::post('/user/auth', '\App\Api\Controllers\UserController@actionAuth');
 Route::middleware('auth:api2')->group(static function () {
     Route::post('/lesson/get', '\App\Api\Controllers\LessonController@actionGet');
     Route::post('/lesson/search', '\App\Api\Controllers\LessonController@actionSearch');
+
+    Route::post('/variant/get', '\App\Api\Controllers\VariantController@actionGet');
 });

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array   $question
  * @property array   $answer
  * @property array   $user_answer
+ * @property array   $result
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
  * @property Carbon  $expired_at
@@ -40,6 +41,7 @@ class Variant extends Model
         'user_id',
         'question',
         'answer',
+        'result',
         'user_answer',
         'expired_at',
         'finished_at',
@@ -63,5 +65,6 @@ class Variant extends Model
         'question'    => 'array',
         'answer'      => 'array',
         'user_answer' => 'array',
+        'result'      => 'array',
     ];
 }

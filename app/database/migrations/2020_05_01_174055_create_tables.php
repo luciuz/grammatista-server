@@ -104,7 +104,8 @@ class CreateTables extends Migration
             $table->unsignedBigInteger('user_id');
             $table->jsonb('question');
             $table->jsonb('answer');
-            $table->jsonb('user_answer');
+            $table->jsonb('user_answer')->nullable();
+            $table->jsonb('result')->nullable();
             $table->timestamps();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('finished_at')->nullable();

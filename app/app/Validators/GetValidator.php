@@ -3,10 +3,10 @@
 namespace App\Validators;
 
 /**
- * Class LessonGetValidator
+ * Class GetValidator
  * @package App\Validators
  */
-class LessonGetValidator extends AbstractValidator
+class GetValidator extends AbstractValidator
 {
     private const ID = 'id';
 

@@ -7,7 +7,7 @@ use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\NotFoundResponse;
 use App\Api\Responses\Response;
 use App\Services\LessonService;
-use App\Validators\LessonGetValidator;
+use App\Validators\GetValidator;
 use App\Validators\LessonSearchValidator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -21,7 +21,7 @@ class LessonController extends BaseController
     /** @var ResponseHelper */
     private $responseHelper;
 
-    /** @var LessonGetValidator */
+    /** @var GetValidator */
     private $lessonGetValidator;
 
     /** @var LessonSearchValidator */
@@ -32,13 +32,13 @@ class LessonController extends BaseController
 
     /**
      * @param ResponseHelper        $responseHelper
-     * @param LessonGetValidator    $lessonGetValidator
+     * @param GetValidator          $lessonGetValidator
      * @param LessonSearchValidator $lessonSearchValidator
      * @param LessonService         $lessonService
      */
     public function __construct(
         ResponseHelper $responseHelper,
-        LessonGetValidator $lessonGetValidator,
+        GetValidator $lessonGetValidator,
         LessonSearchValidator $lessonSearchValidator,
         LessonService $lessonService
     ) {
