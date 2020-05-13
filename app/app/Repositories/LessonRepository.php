@@ -45,14 +45,26 @@ class LessonRepository
         $lesson = (new Lesson())->getTable();
         $bookmark = (new Bookmark())->getTable();
         $variant = (new Variant())->getTable();
+        $activeVariant = 'av';
         $query = $this->baseQuery($userId)
+            ->leftJoin(
+                $variant . ' as ' . $activeVariant,
+                static function (JoinClause $join) use ($activeVariant, $lesson, $userId) {
+                    $join->on($activeVariant . '.lesson_id', '=', $lesson . '.id')
+                        ->where($activeVariant . '.user_id', $userId)
+                        ->where($activeVariant . '.expired_at', '>', Carbon::now())
+                        ->whereNull($activeVariant . '.finished_at')
+                        ->whereNull($activeVariant . '.deleted_at');
+                }
+            )
             ->where($lesson . '.id', $id)
             ->selectRaw(<<<SQL
                 $lesson.id,
                 $lesson.title,
                 $lesson.body,
                 COUNT($bookmark.id) bookmark_id,
-                COUNT($variant.id) complete_id
+                COUNT($variant.id) complete_id,
+                MAX($activeVariant.id) active_variant_id
 SQL);
         $result = $query->first();
         return $result ? (array) $result : null;

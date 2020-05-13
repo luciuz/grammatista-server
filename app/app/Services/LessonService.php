@@ -83,6 +83,7 @@ class LessonService
             'body'       => json_decode($raw['body']),
             'isBookmark' => (bool) $raw['bookmark_id'],
             'isComplete' => (bool) $raw['complete_id'],
+            'activeVariantId' => $raw['active_variant_id'],
         ];
     }
 }
