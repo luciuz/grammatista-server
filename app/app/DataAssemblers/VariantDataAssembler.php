@@ -16,7 +16,7 @@ class VariantDataAssembler
     {
         return [
             'id'        => $data['id'],
-            'expiredAt' => $data['expired_at'] ? $data['expired_at']->timestamp : null,
+            'expiredAt' => $data['expired_at'] ? strtotime($data['expired_at']) : null,
             'question'  => $data['question'],
             'result'    => $data['result'],
         ];
