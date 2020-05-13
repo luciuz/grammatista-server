@@ -51,8 +51,8 @@ class LessonRepository
                 $lesson.id,
                 $lesson.title,
                 $lesson.body,
-                $bookmark.id bookmark_id,
-                $variant.id complete_id
+                COUNT($bookmark.id) bookmark_id,
+                COUNT($variant.id) complete_id
 SQL);
         $result = $query->first();
         return $result ? (array) $result : null;
@@ -75,8 +75,8 @@ SQL);
                 count(*) over() as total_rows,
                 $lesson.id,
                 $lesson.title,
-                $bookmark.id bookmark_id,
-                $variant.id complete_id
+                COUNT($bookmark.id) bookmark_id,
+                COUNT($variant.id) complete_id
 SQL);
             return $query->get()->all();
     }
@@ -122,6 +122,7 @@ SQL);
                     ->where($variant . '.is_complete', true)
                     ->whereNull($variant . '.deleted_at');
             })
+            ->groupBy($lesson . '.id')
             ->whereNull($lesson . '.deleted_at')
             ->where($lesson . '.published_at', '<', Carbon::now());
         return $query;
