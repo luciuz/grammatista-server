@@ -20,6 +20,15 @@ class TestRepository
     }
 
     /**
+     * @param int $id
+     * @return Test|null
+     */
+    public function findByLessonId(int $id): ?Test
+    {
+        return Test::query()->where('lesson_id', $id)->first();
+    }
+
+    /**
      * @param array $attributes
      * @return Test
      */

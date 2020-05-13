@@ -15,10 +15,11 @@ class VariantDataAssembler
     public function make(array $data): array
     {
         return [
-            'id'        => $data['id'],
-            'expiredAt' => $data['expired_at'] ? strtotime($data['expired_at']) : null,
-            'question'  => $data['question'],
-            'result'    => $data['result'],
+            'id'         => $data['id'],
+            'expiredAt'  => $data['expired_at'] ? strtotime($data['expired_at']) : null,
+            'finishedAt' => $data['finished_at'] ? strtotime($data['finished_at']) : null,
+            'question'   => json_decode($data['question']),
+            'result'     => $data['result'] ? json_decode($data['result']) : null,
         ];
     }
 }
