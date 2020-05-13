@@ -29,4 +29,18 @@ class VariantRepository
         $model->save();
         return $model;
     }
+
+    /**
+     * @param Variant $model
+     * @param array   $attributes
+     * @return Variant
+     */
+    public function update(Variant $model, array $attributes): Variant
+    {
+        foreach ($attributes as $key => $value) {
+            $model->setAttribute($key, $value);
+        }
+        $model->save();
+        return $model;
+    }
 }

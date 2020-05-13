@@ -22,4 +22,5 @@ Route::middleware('auth:api2')->group(static function () {
 
     Route::post('/variant/create', '\App\Api\Controllers\VariantController@actionCreate');
     Route::post('/variant/get', '\App\Api\Controllers\VariantController@actionGet');
+    Route::post('/variant/finish', '\App\Api\Controllers\VariantController@actionFinish');
 });
