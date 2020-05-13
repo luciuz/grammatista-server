@@ -11,6 +11,9 @@ class VariantDto
     /** @var int */
     private $id;
 
+    /** @var bool */
+    private $isComplete;
+
     /** @var int|null */
     private $expiredAt;
 

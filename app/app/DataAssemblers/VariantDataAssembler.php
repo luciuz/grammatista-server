@@ -16,6 +16,7 @@ class VariantDataAssembler
     {
         return [
             'id'         => $data['id'],
+            'isComplete' => $data['is_complete'],
             'expiredAt'  => $data['expired_at'] ? strtotime($data['expired_at']) : null,
             'finishedAt' => $data['finished_at'] ? strtotime($data['finished_at']) : null,
             'question'   => json_decode($data['question']),
