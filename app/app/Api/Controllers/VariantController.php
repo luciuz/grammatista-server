@@ -165,7 +165,7 @@ class VariantController extends BaseController
 
             try {
                 $result = $this->idempotentService->runIdempotent(
-                    $data['transaction_token'],
+                    $data['transactionToken'],
                     [$this, 'finish'],
                     [$variant, $answerList, $userAnswer]
                 );

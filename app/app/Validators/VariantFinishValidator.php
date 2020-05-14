@@ -2,6 +2,9 @@
 
 namespace App\Validators;
 
+use App\Rules\UuidV4Rule;
+use Illuminate\Validation\Factory as ValidationFactory;
+
 /**
  * Class VariantFinishValidator
  * @package App\Validators
@@ -10,6 +13,22 @@ class VariantFinishValidator extends AbstractValidator
 {
     private const ID = 'id';
     private const USER_ANSWER = 'userAnswer';
+    private const TRANSACTION_TOKEN = 'transactionToken';
+
+    /** @var UuidV4Rule */
+    private $uuidV4Rule;
+
+    /**
+     * @param ValidationFactory $validator
+     * @param UuidV4Rule        $uuidV4Rule
+     */
+    public function __construct(
+        ValidationFactory $validator,
+        UuidV4Rule $uuidV4Rule
+    ) {
+        parent::__construct($validator);
+        $this->uuidV4Rule = $uuidV4Rule;
+    }
 
     /**
      * @return array
@@ -17,9 +36,10 @@ class VariantFinishValidator extends AbstractValidator
     public function rules(): array
     {
         return [
-            self::ID => 'required|int',
+            self::ID                    => 'required|int',
             self::USER_ANSWER           => 'required|array',
             self::USER_ANSWER . '.list' => 'required|array',
+            self::TRANSACTION_TOKEN     => ['required', 'string', $this->uuidV4Rule],
         ];
     }
 }

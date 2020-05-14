@@ -143,7 +143,7 @@ class ImportLessonDataAssembler
         $value = $line[$key];
         if ($this->section === self::SECTION_ANSWER && $key === self::ANSWERS_TAG) {
             foreach ($value as $items) {
-                $answers = explode(',', $items);
+                $answers = array_map('intval', explode(',', $items));
                 $this->result[$this->section]['list'][] = $answers;
             }
             $this->section = null;
