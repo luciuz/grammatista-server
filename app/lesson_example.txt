@@ -6,7 +6,7 @@
 
 [//]: # (#####lesson#####)
 
-# Заголовок урока
+# Заголовок материала
 
 ## Второй заголовок
 
@@ -22,7 +22,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 ## Второй заголовок
 
-### List
+### List - это третий заголовок
 
 - item
 - item
@@ -43,15 +43,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 ### Question 1
 
-1. answer 1
+1. correct 1
 1. answer
 1. answer
 1. answer
 
 ### Question 2
 
-1. answer 11
-1. answer
+1. correct 11
+1. correct
 1. answer
 1. answer
 
@@ -59,15 +59,15 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 1. answer 111
 1. answer
-1. answer
+1. correct
 1. answer
 
-### Question 4
+### Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu? 4
 
 1. answer 1111
 1. answer
 1. answer
-1. answer
+1. correct
 
 [//]: # (#####answer#####)
 1. 1
