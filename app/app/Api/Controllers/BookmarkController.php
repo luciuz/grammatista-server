@@ -2,14 +2,16 @@
 
 namespace App\Api\Controllers;
 
+use App\Api\Dtos\BookmarkListDto;
 use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\BadRequestResponse;
 use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
-use App\Repositories\BookmarkRepository;
+use App\Services\BookmarkService;
 use App\Services\Idempotent\IdempotentMutexException;
 use App\Exceptions\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
+use App\Validators\BookmarkListValidator;
 use App\Validators\BookmarkSetDelValidator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -20,11 +22,14 @@ use Illuminate\Routing\Controller as BaseController;
  */
 class BookmarkController extends BaseController
 {
-    /** @var BookmarkRepository */
-    private $bookmarkRepository;
+    /** @var BookmarkService */
+    private $bookmarkService;
 
     /** @var BookmarkSetDelValidator */
     private $bookmarkSetDelValidator;
+
+    /** @var BookmarkListValidator */
+    private $bookmarkListValidator;
 
     /** @var IdempotentService */
     private $idempotentService;
@@ -33,19 +38,22 @@ class BookmarkController extends BaseController
     private $responseHelper;
 
     /**
-     * @param BookmarkRepository      $bookmarkRepository
+     * @param BookmarkService         $bookmarkService
      * @param BookmarkSetDelValidator $bmSetDelValidator
+     * @param BookmarkListValidator   $bookmarkListValidator
      * @param IdempotentService       $idempotentService
      * @param ResponseHelper          $responseHelper
      */
     public function __construct(
-        BookmarkRepository $bookmarkRepository,
+        BookmarkService $bookmarkService,
         BookmarkSetDelValidator $bmSetDelValidator,
+        BookmarkListValidator $bookmarkListValidator,
         IdempotentService $idempotentService,
         ResponseHelper $responseHelper
     ) {
-        $this->bookmarkRepository = $bookmarkRepository;
+        $this->bookmarkService = $bookmarkService;
         $this->bookmarkSetDelValidator = $bmSetDelValidator;
+        $this->bookmarkListValidator = $bookmarkListValidator;
         $this->idempotentService = $idempotentService;
         $this->responseHelper = $responseHelper;
     }
@@ -101,6 +109,22 @@ class BookmarkController extends BaseController
     }
 
     /**
+     * @see BookmarkListDto
+     * @param Request $request
+     * @return Response
+     */
+    public function actionList(Request $request): Response
+    {
+        return $this->responseHelper->run(function ($request) {
+            $data = $request->all();
+            $this->bookmarkListValidator->validate($data);
+
+            $result = $this->list($data);
+            return new Response($result);
+        }, [$request]);
+    }
+
+    /**
      * @param int $userId
      * @param int $lessonId
      * @return array|null
@@ -108,11 +132,12 @@ class BookmarkController extends BaseController
      */
     public function set(int $userId, int $lessonId): ?array
     {
-        if ($this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
+        $repository = $this->bookmarkService->getRepository();
+        if ($repository->existsByUserIdLessonId($userId, $lessonId)) {
             throw new IdempotentException('Bookmark already exists.', 400);
         }
 
-        $this->bookmarkRepository->createByUserIdLessonId($userId, $lessonId);
+        $repository->createByUserIdLessonId($userId, $lessonId);
         return null;
     }
 
@@ -124,11 +149,24 @@ class BookmarkController extends BaseController
      */
     public function delete(int $userId, int $lessonId): ?array
     {
-        if (!$this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
+        $repository = $this->bookmarkService->getRepository();
+        if (!$repository->existsByUserIdLessonId($userId, $lessonId)) {
             throw new IdempotentException('Bookmark does not exist.', 400);
         }
 
-        $this->bookmarkRepository->deleteByUserIdLessonId($userId, $lessonId);
+        $repository->deleteByUserIdLessonId($userId, $lessonId);
         return null;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function list(array $data): array
+    {
+        return $this->bookmarkService->list(
+            $data['maxId'] ?? null,
+            \Auth::user()->getAuthIdentifier()
+        );
     }
 }

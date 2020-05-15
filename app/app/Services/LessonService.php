@@ -2,11 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Bookmark;
-use App\Models\Lesson;
-use App\Models\Variant;
 use App\Repositories\LessonRepository;
-use Illuminate\Database\Query\JoinClause;
 
 /**
  * Class LessonService

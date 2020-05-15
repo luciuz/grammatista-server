@@ -26,4 +26,5 @@ Route::middleware('auth:api2')->group(static function () {
 
     Route::post('/bookmark/set', '\App\Api\Controllers\BookmarkController@actionSet');
     Route::post('/bookmark/delete', '\App\Api\Controllers\BookmarkController@actionDelete');
+    Route::post('/bookmark/list', '\App\Api\Controllers\BookmarkController@actionList');
 });
