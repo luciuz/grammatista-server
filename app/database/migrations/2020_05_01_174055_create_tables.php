@@ -20,6 +20,8 @@ class CreateTables extends Migration
     private const FK_BOOKMARK_USER    = 'fk_bookmark_user';
     private const FK_BOOKMARK_LESSON  = 'fk_bookmark_lesson';
 
+    private const BOOKMARK_USER_LESSON_KEY  = 'bookmark_user_lesson_key';
+
     private const EN = 'en';
     private const RU = 'ru';
 
@@ -132,6 +134,7 @@ class CreateTables extends Migration
                 ->references('id')->on(self::TABLE_USER);
             $table->foreign('lesson_id', self::FK_BOOKMARK_LESSON)
                 ->references('id')->on(self::TABLE_LESSON);
+            $table->unique(['user_id', 'lesson_id'], self::BOOKMARK_USER_LESSON_KEY);
         });
     }
 
