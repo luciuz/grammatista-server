@@ -7,7 +7,7 @@ use App\Api\Helpers\ResponseHelper;
 use App\Api\Responses\ForbiddenResponse;
 use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
-use App\Exceptions\ForbiddenException;
+use App\Exceptions\IdempotentException;
 use App\Repositories\UserRepository;
 use App\Repositories\UserSessionRepository;
 use App\Services\Idempotent\IdempotentMutexException;
@@ -75,8 +75,8 @@ class UserController extends BaseController
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
-            } catch (ForbiddenException $e) {
-                return new ForbiddenResponse();
+            } catch (IdempotentException $e) {
+                return new ForbiddenResponse($e->getMessage());
             }
         }, [$request]);
     }
@@ -84,7 +84,7 @@ class UserController extends BaseController
     /**
      * @param array $data
      * @return array
-     * @throws \Exception
+     * @throws IdempotentException
      */
     public function auth(array $data): array
     {
@@ -99,7 +99,7 @@ class UserController extends BaseController
             ]);
             $view = 'welcome';
         } elseif ($user->is_active === false) {
-            throw new ForbiddenException('User blocked.');
+            throw new IdempotentException('User blocked.', 403);
         }
 
         $session = [

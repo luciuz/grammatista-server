@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Idempotent;
+namespace App\Exceptions;
 
 /**
  * Class IdempotentException

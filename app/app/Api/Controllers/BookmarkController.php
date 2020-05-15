@@ -8,7 +8,7 @@ use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
 use App\Repositories\BookmarkRepository;
 use App\Services\Idempotent\IdempotentMutexException;
-use App\Services\Idempotent\IdempotentException;
+use App\Exceptions\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\BookmarkSetDelValidator;
 use Illuminate\Http\Request;

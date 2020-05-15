@@ -15,7 +15,7 @@ use App\DataAssemblers\VariantDataAssembler;
 use App\Repositories\TestRepository;
 use App\Repositories\VariantRepository;
 use App\Services\Idempotent\IdempotentMutexException;
-use App\Services\Idempotent\IdempotentException;
+use App\Exceptions\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\GetValidator;
 use App\Validators\VariantCreateValidator;
