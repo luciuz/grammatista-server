@@ -8,6 +8,7 @@ use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
 use App\Repositories\BookmarkRepository;
 use App\Services\Idempotent\IdempotentMutexException;
+use App\Services\Idempotent\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\BookmarkSetDelValidator;
 use Illuminate\Http\Request;
@@ -62,16 +63,14 @@ class BookmarkController extends BaseController
 
             $userId = \Auth::user()->getAuthIdentifier();
             $lessonId = $data['lessonId'];
-            if ($this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
-                return new BadRequestResponse();
-            }
-
             try {
                 $result = $this->idempotentService
                     ->runIdempotent($data['transactionToken'], [$this, 'set'], [$userId, $lessonId]);
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
+            } catch (IdempotentException $e) {
+                return new BadRequestResponse($e->getMessage());
             }
         }, [$request]);
     }
@@ -88,9 +87,6 @@ class BookmarkController extends BaseController
 
             $userId = \Auth::user()->getAuthIdentifier();
             $lessonId = $data['lessonId'];
-            if (!$this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
-                return new BadRequestResponse();
-            }
 
             try {
                 $result = $this->idempotentService
@@ -98,6 +94,8 @@ class BookmarkController extends BaseController
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
+            } catch (IdempotentException $e) {
+                return new BadRequestResponse($e->getMessage());
             }
         }, [$request]);
     }
@@ -106,9 +104,14 @@ class BookmarkController extends BaseController
      * @param int $userId
      * @param int $lessonId
      * @return array|null
+     * @throws IdempotentException
      */
     public function set(int $userId, int $lessonId): ?array
     {
+        if ($this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
+            throw new IdempotentException('Bookmark already exists.', 400);
+        }
+
         $this->bookmarkRepository->createByUserIdLessonId($userId, $lessonId);
         return null;
     }
@@ -117,9 +120,14 @@ class BookmarkController extends BaseController
      * @param int $userId
      * @param int $lessonId
      * @return array|null
+     * @throws IdempotentException
      */
     public function delete(int $userId, int $lessonId): ?array
     {
+        if (!$this->bookmarkRepository->existsByUserIdLessonId($userId, $lessonId)) {
+            throw new IdempotentException('Bookmark does not exist.', 400);
+        }
+
         $this->bookmarkRepository->deleteByUserIdLessonId($userId, $lessonId);
         return null;
     }

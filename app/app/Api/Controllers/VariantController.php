@@ -12,11 +12,10 @@ use App\Api\Responses\NotFoundResponse;
 use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
 use App\DataAssemblers\VariantDataAssembler;
-use App\Models\Test;
-use App\Models\Variant;
 use App\Repositories\TestRepository;
 use App\Repositories\VariantRepository;
 use App\Services\Idempotent\IdempotentMutexException;
+use App\Services\Idempotent\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
 use App\Validators\GetValidator;
 use App\Validators\VariantCreateValidator;
@@ -98,18 +97,16 @@ class VariantController extends BaseController
             $data = $request->all();
             $this->variantCreateValidator->validate($data);
 
-            $test = $this->testRepository->findByLessonId($data['lessonId']);
-            if ($test === null) {
-                return new NotFoundResponse('Test not found.');
-            }
-
+            $lessonId = $data['lessonId'];
             $userId = \Auth::user()->getAuthIdentifier();
             try {
                 $result = $this->idempotentService
-                    ->runIdempotent($data['transactionToken'], [$this, 'create'], [$test, $userId]);
+                    ->runIdempotent($data['transactionToken'], [$this, 'create'], [$lessonId, $userId]);
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
+            } catch (IdempotentException $e) {
+                return new NotFoundResponse($e->getMessage());
             }
         }, [$request]);
     }
@@ -149,40 +146,40 @@ class VariantController extends BaseController
             $data = $request->all();
             $this->variantFinishValidator->validate($data);
 
-            $variant = $this->variantRepository->findById($data['id']);
-            if ($variant === null) {
-                return new NotFoundResponse();
-            }
-            if ($variant->user_id !== \Auth::user()->getAuthIdentifier()) {
-                return new ForbiddenResponse();
-            }
-
-            $answerList = $variant->answer['list'];
-            $userAnswer = $data['userAnswer'];
-            if (count($answerList) !== count($userAnswer['list'])) {
-                return new BadRequestResponse('Invalid user answer count.');
-            }
-
+            $userId = \Auth::user()->getAuthIdentifier();
             try {
-                $result = $this->idempotentService->runIdempotent(
-                    $data['transactionToken'],
-                    [$this, 'finish'],
-                    [$variant, $answerList, $userAnswer]
-                );
+                $result = $this->idempotentService
+                    ->runIdempotent($data['transactionToken'], [$this, 'finish'], [$data, $userId]);
                 return new Response($result);
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
+            } catch (IdempotentException $e) {
+                switch ($e->getCode()) {
+                    case 404:
+                        return new NotFoundResponse($e->getMessage());
+                    case 403:
+                        return new ForbiddenResponse($e->getMessage());
+                    case 400:
+                    default:
+                        return new BadRequestResponse($e->getMessage());
+                }
             }
         }, [$request]);
     }
 
     /**
-     * @param Test $test
-     * @param int  $userId
+     * @param int $lessonId
+     * @param int $userId
      * @return array|null
+     * @throws IdempotentException
      */
-    public function create(Test $test, int $userId): ?array
+    public function create(int $lessonId, int $userId): ?array
     {
+        $test = $this->testRepository->findByLessonId($lessonId);
+        if ($test === null) {
+            throw new IdempotentException('Test not found.', 404);
+        }
+
         $params = [
             'is_complete' => false,
             'lesson_id'   => $test->lesson_id,
@@ -201,13 +198,27 @@ class VariantController extends BaseController
     }
 
     /**
-     * @param Variant $variant
-     * @param array   $answerList
-     * @param array   $userAnswer
+     * @param array $data
+     * @param int   $userId
      * @return array|null
+     * @throws IdempotentException
      */
-    public function finish(Variant $variant, array $answerList, array $userAnswer): ?array
+    public function finish(array $data, int $userId): ?array
     {
+        $variant = $this->variantRepository->findById($data['id']);
+        if ($variant === null) {
+            throw new IdempotentException('Variant not found.', 404);
+        }
+        if ($variant->user_id !== $userId) {
+            throw new IdempotentException(null, 403);
+        }
+
+        $answerList = $variant->answer['list'];
+        $userAnswer = $data['userAnswer'];
+        if (count($answerList) !== count($userAnswer['list'])) {
+            throw new IdempotentException('Invalid user answer count.', 400);
+        }
+
         $result = [];
         $errors = 0;
         $userAnswerList = $userAnswer['list'];

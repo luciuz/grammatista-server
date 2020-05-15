@@ -3,9 +3,9 @@
 namespace App\Services\Idempotent;
 
 /**
- * Class IdempotentMutexException
+ * Class IdempotentException
  * @package App\Services\Idempotent
  */
-class IdempotentMutexException extends \Exception
+class IdempotentException extends \Exception
 {
 }
