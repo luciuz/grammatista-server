@@ -82,6 +82,14 @@ class UserController extends BaseController
     }
 
     /**
+     * @return Response
+     */
+    public function actionCheck(): Response
+    {
+        return new Response();
+    }
+
+    /**
      * @param array $data
      * @return array
      * @throws IdempotentException
