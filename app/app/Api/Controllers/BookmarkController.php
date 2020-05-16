@@ -11,7 +11,7 @@ use App\Services\BookmarkService;
 use App\Services\Idempotent\IdempotentMutexException;
 use App\Exceptions\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
-use App\Validators\BookmarkListValidator;
+use App\Validators\ListValidator;
 use App\Validators\BookmarkSetDelValidator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -28,7 +28,7 @@ class BookmarkController extends BaseController
     /** @var BookmarkSetDelValidator */
     private $bookmarkSetDelValidator;
 
-    /** @var BookmarkListValidator */
+    /** @var ListValidator */
     private $bookmarkListValidator;
 
     /** @var IdempotentService */
@@ -40,14 +40,14 @@ class BookmarkController extends BaseController
     /**
      * @param BookmarkService         $bookmarkService
      * @param BookmarkSetDelValidator $bmSetDelValidator
-     * @param BookmarkListValidator   $bookmarkListValidator
+     * @param ListValidator           $bookmarkListValidator
      * @param IdempotentService       $idempotentService
      * @param ResponseHelper          $responseHelper
      */
     public function __construct(
         BookmarkService $bookmarkService,
         BookmarkSetDelValidator $bmSetDelValidator,
-        BookmarkListValidator $bookmarkListValidator,
+        ListValidator $bookmarkListValidator,
         IdempotentService $idempotentService,
         ResponseHelper $responseHelper
     ) {

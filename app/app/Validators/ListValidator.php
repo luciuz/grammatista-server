@@ -3,10 +3,10 @@
 namespace App\Validators;
 
 /**
- * Class BookmarkListValidator
+ * Class ListValidator
  * @package App\Validators
  */
-class BookmarkListValidator extends AbstractValidator
+class ListValidator extends AbstractValidator
 {
     private const MAX_ID = 'maxId';
 

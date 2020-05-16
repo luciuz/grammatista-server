@@ -17,7 +17,9 @@ use App\Repositories\VariantRepository;
 use App\Services\Idempotent\IdempotentMutexException;
 use App\Exceptions\IdempotentException;
 use App\Services\Idempotent\IdempotentService;
+use App\Services\VariantService;
 use App\Validators\GetValidator;
+use App\Validators\ListValidator;
 use App\Validators\VariantCreateValidator;
 use App\Validators\VariantFinishValidator;
 use Carbon\Carbon;
@@ -44,8 +46,11 @@ class VariantController extends BaseController
     /** @var VariantFinishValidator */
     private $variantFinishValidator;
 
-    /** @var VariantRepository */
-    private $variantRepository;
+    /** @var ListValidator */
+    private $variantListValidator;
+
+    /** @var VariantService */
+    private $variantService;
 
     /** @var TestRepository */
     private $testRepository;
@@ -61,7 +66,8 @@ class VariantController extends BaseController
      * @param GetValidator           $variantGetValidator
      * @param VariantCreateValidator $variantCreateValidator
      * @param VariantFinishValidator $variantFinishValidator
-     * @param VariantRepository      $variantRepository
+     * @param ListValidator          $variantListValidator
+     * @param VariantService         $variantService
      * @param TestRepository         $testRepository
      * @param VariantDataAssembler   $variantDataAssembler
      * @param IdempotentService      $idempotentService
@@ -71,7 +77,8 @@ class VariantController extends BaseController
         GetValidator $variantGetValidator,
         VariantCreateValidator $variantCreateValidator,
         VariantFinishValidator $variantFinishValidator,
-        VariantRepository $variantRepository,
+        ListValidator $variantListValidator,
+        VariantService $variantService,
         TestRepository $testRepository,
         VariantDataAssembler $variantDataAssembler,
         IdempotentService $idempotentService
@@ -80,7 +87,8 @@ class VariantController extends BaseController
         $this->variantGetValidator = $variantGetValidator;
         $this->variantCreateValidator = $variantCreateValidator;
         $this->variantFinishValidator = $variantFinishValidator;
-        $this->variantRepository = $variantRepository;
+        $this->variantListValidator = $variantListValidator;
+        $this->variantService = $variantService;
         $this->testRepository = $testRepository;
         $this->variantDataAssembler = $variantDataAssembler;
         $this->idempotentService = $idempotentService;
@@ -122,7 +130,7 @@ class VariantController extends BaseController
             $data = $request->all();
             $this->variantGetValidator->validate($data);
 
-            $variant = $this->variantRepository->findById($data['id']);
+            $variant = $this->variantService->getRepository()->findById($data['id']);
             if ($variant === null) {
                 return new NotFoundResponse();
             }
@@ -168,6 +176,22 @@ class VariantController extends BaseController
     }
 
     /**
+     * @see ResultListDto
+     * @param Request $request
+     * @return Response
+     */
+    public function actionList(Request $request): Response
+    {
+        return $this->responseHelper->run(function ($request) {
+            $data = $request->all();
+            $this->variantListValidator->validate($data);
+
+            $result = $this->list($data);
+            return new Response($result);
+        }, [$request]);
+    }
+
+    /**
      * @param int $lessonId
      * @param int $userId
      * @return array|null
@@ -193,7 +217,7 @@ class VariantController extends BaseController
             $params['expired_at'] = Carbon::now()->modify($test->duration . ' seconds');
         }
 
-        $variant = $this->variantRepository->create($params);
+        $variant = $this->variantService->getRepository()->create($params);
         return ['id' => $variant->id];
     }
 
@@ -205,7 +229,8 @@ class VariantController extends BaseController
      */
     public function finish(array $data, int $userId): ?array
     {
-        $variant = $this->variantRepository->findById($data['id']);
+        $repository = $this->variantService->getRepository();
+        $variant = $repository->findById($data['id']);
         if ($variant === null) {
             throw new IdempotentException('Variant not found.', 404);
         }
@@ -244,7 +269,19 @@ class VariantController extends BaseController
             'finished_at' => Carbon::now(),
         ];
 
-        $this->variantRepository->update($variant, $params);
+        $repository->update($variant, $params);
         return compact('isComplete');
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function list(array $data): array
+    {
+        return $this->variantService->list(
+            $data['maxId'] ?? null,
+            \Auth::user()->getAuthIdentifier()
+        );
     }
 }
