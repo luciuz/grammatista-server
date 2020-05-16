@@ -3,10 +3,12 @@
 namespace App\Exceptions;
 
 use App\Api\Responses\InternalErrorResponse;
+use App\Api\Responses\TooManyRequestsResponse;
 use App\Api\Responses\UnauthorizedResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -70,6 +72,9 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof AuthenticationException) {
             return new UnauthorizedResponse();
+        }
+        if ($e instanceof ThrottleRequestsException) {
+            return new TooManyRequestsResponse();
         }
 
         $this->logger->error(
