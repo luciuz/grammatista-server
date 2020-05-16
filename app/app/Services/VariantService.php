@@ -53,7 +53,7 @@ class VariantService
                 $list[] = [
                     'id'         => $item->id,
                     'title'      => $item->title,
-                    'isComplete' => $item->complete_id,
+                    'isComplete' => $item->is_complete,
                 ];
             }
         }

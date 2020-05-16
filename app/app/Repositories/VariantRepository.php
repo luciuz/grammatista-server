@@ -65,7 +65,7 @@ class VariantRepository
                 $variant.id id,
                 $lesson.id lesson_id,
                 $lesson.title,
-                $variant.id complete_id
+                $variant.is_complete
 SQL);
         return $query->get()->all();
     }
