@@ -46,6 +46,7 @@ class LessonRepository
         $bookmark = (new Bookmark())->getTable();
         $variant = (new Variant())->getTable();
         $activeVariant = 'av';
+        $completeVariant = 'cv';
         $query = $this->baseQuery($userId)
             ->leftJoin(
                 $variant . ' as ' . $activeVariant,
@@ -57,6 +58,15 @@ class LessonRepository
                         ->whereNull($activeVariant . '.deleted_at');
                 }
             )
+            ->leftJoin(
+                $variant . ' as ' . $completeVariant,
+                static function (JoinClause $join) use ($completeVariant, $lesson, $userId) {
+                    $join->on($completeVariant . '.lesson_id', '=', $lesson . '.id')
+                        ->where($completeVariant . '.user_id', $userId)
+                        ->where($completeVariant . '.is_complete', true)
+                        ->whereNull($completeVariant . '.deleted_at');
+                }
+            )
             ->where($lesson . '.id', $id)
             ->selectRaw(<<<SQL
                 $lesson.id,
@@ -64,7 +74,8 @@ class LessonRepository
                 $lesson.body,
                 COUNT($bookmark.id) bookmark_id,
                 COUNT($variant.id) complete_id,
-                MAX($activeVariant.id) active_variant_id
+                MAX($activeVariant.id) active_variant_id,
+                MAX($completeVariant.id) complete_variant_id
 SQL);
         $result = $query->first();
         return $result ? (array) $result : null;

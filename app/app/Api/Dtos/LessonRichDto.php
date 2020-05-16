@@ -25,4 +25,7 @@ class LessonRichDto
 
     /** @var int|null */
     private $activeVariantId;
+
+    /** @var int|null */
+    private $completeVariantId;
 }
