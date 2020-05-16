@@ -25,6 +25,33 @@ class VariantRepository
     }
 
     /**
+     * @param int $id
+     * @param int $userId
+     * @return array|null
+     */
+    public function findRichById(int $id, int $userId): ?array
+    {
+        $variant = (new Variant())->getTable();
+        $lesson = (new Lesson())->getTable();
+        $query = \DB::table($variant)
+            ->leftJoin($lesson, static function (JoinClause $join) use ($lesson, $variant) {
+                $join->on($lesson . '.id', '=', $variant . '.lesson_id')
+                    ->whereNull($lesson . '.deleted_at')
+                    ->where($lesson . '.published_at', '<', Carbon::now());
+            })
+            ->where([
+                $variant . '.id' => $id,
+                $variant . '.user_id' => $userId
+            ])
+            ->selectRaw(<<<SQL
+                $variant.*,
+                $lesson.title
+SQL);
+        $result = $query->first();
+        return $result ? (array) $result : null;
+    }
+
+    /**
      * @param array $attributes
      * @return Variant
      */

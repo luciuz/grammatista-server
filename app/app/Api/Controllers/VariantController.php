@@ -32,7 +32,7 @@ use Illuminate\Routing\Controller as BaseController;
  */
 class VariantController extends BaseController
 {
-    private const MAX_ERRORS = 2;
+    private const MAX_ERRORS = 0;
 
     /** @var ResponseHelper */
     private $responseHelper;
@@ -130,15 +130,13 @@ class VariantController extends BaseController
             $data = $request->all();
             $this->variantGetValidator->validate($data);
 
-            $variant = $this->variantService->getRepository()->findById($data['id']);
+            $userId = \Auth::user()->getAuthIdentifier();
+            $variant = $this->variantService->getRepository()->findRichById($data['id'], $userId);
             if ($variant === null) {
                 return new NotFoundResponse();
             }
-            if ($variant->user_id !== \Auth::user()->getAuthIdentifier()) {
-                return new ForbiddenResponse();
-            }
 
-            $result = $this->variantDataAssembler->make($variant->getAttributes());
+            $result = $this->variantDataAssembler->make($variant);
             return new Response($result);
         }, [$request]);
     }

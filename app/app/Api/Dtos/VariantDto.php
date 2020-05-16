@@ -11,6 +11,9 @@ class VariantDto
     /** @var int */
     private $id;
 
+    /** @var string */
+    private $title;
+
     /** @var bool */
     private $isComplete;
 
