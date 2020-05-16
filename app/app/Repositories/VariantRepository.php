@@ -92,7 +92,8 @@ SQL);
                 $variant.id id,
                 $lesson.id lesson_id,
                 $lesson.title,
-                $variant.is_complete
+                $variant.is_complete,
+                $variant.finished_at
 SQL);
         return $query->get()->all();
     }

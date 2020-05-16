@@ -54,6 +54,7 @@ class VariantService
                     'id'         => $item->id,
                     'title'      => $item->title,
                     'isComplete' => $item->is_complete,
+                    'finishedAt' => strtotime($item->finished_at),
                 ];
             }
         }

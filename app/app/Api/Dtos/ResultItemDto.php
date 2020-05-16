@@ -16,4 +16,7 @@ class ResultItemDto
 
     /** @var bool */
     private $isComplete;
+
+    /** @var int */
+    private $finishedAt;
 }
