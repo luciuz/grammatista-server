@@ -4,7 +4,7 @@ namespace App\Api\Controllers;
 
 use App\Api\Dtos\BookmarkListDto;
 use App\Api\Helpers\ResponseHelper;
-use App\Api\Responses\BadRequestResponse;
+use App\Api\Responses\UnprocessableEntityResponse;
 use App\Api\Responses\Response;
 use App\Api\Responses\ServiceUnavailableResponse;
 use App\Services\BookmarkService;
@@ -78,7 +78,7 @@ class BookmarkController extends BaseController
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
             } catch (IdempotentException $e) {
-                return new BadRequestResponse($e->getMessage());
+                return new UnprocessableEntityResponse($e->getMessage());
             }
         }, [$request]);
     }
@@ -103,7 +103,7 @@ class BookmarkController extends BaseController
             } catch (IdempotentMutexException $e) {
                 return new ServiceUnavailableResponse();
             } catch (IdempotentException $e) {
-                return new BadRequestResponse($e->getMessage());
+                return new UnprocessableEntityResponse($e->getMessage());
             }
         }, [$request]);
     }

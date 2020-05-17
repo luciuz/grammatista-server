@@ -4,7 +4,7 @@ namespace App\Api\Helpers;
 
 use App\Api\Responses\InternalErrorResponse;
 use App\Api\Responses\Response;
-use App\Api\Responses\ValidationErrorResponse;
+use App\Api\Responses\BadRequestResponse;
 use Illuminate\Validation\ValidationException;
 use Psr\Log\LoggerInterface;
 
@@ -36,7 +36,7 @@ class ResponseHelper
             return $callable(...$params);
         } catch (ValidationException $e) {
             $errors = $e->errors();
-            return new ValidationErrorResponse(compact('errors'));
+            return new BadRequestResponse(compact('errors'));
         } catch (\Throwable $e) {
             $this->logger->error(
                 'Exception in ResponseHelper::run.',

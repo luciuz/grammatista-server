@@ -8,16 +8,15 @@ namespace App\Api\Responses;
  */
 class BadRequestResponse extends Response
 {
-    private const CODE    = 400;
-    private const MESSAGE = 'Bad request.';
+    private const CODE = 400;
 
     /**
-     * @param mixed $data
+     * @param null  $data
      * @param int   $status
      * @param array $headers
      * @param int   $options
      */
-    public function __construct($data = self::MESSAGE, $status = self::CODE, $headers = [], $options = 0)
+    public function __construct($data = null, $status = self::CODE, $headers = [], $options = 0)
     {
         parent::__construct($data, $status, $headers, $options);
     }

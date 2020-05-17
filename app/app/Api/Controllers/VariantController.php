@@ -6,7 +6,7 @@ use App\Api\Dtos\IdDto;
 use App\Api\Dtos\VariantDto;
 use App\Api\Dtos\VariantFinishDto;
 use App\Api\Helpers\ResponseHelper;
-use App\Api\Responses\BadRequestResponse;
+use App\Api\Responses\UnprocessableEntityResponse;
 use App\Api\Responses\ForbiddenResponse;
 use App\Api\Responses\NotFoundResponse;
 use App\Api\Responses\Response;
@@ -167,7 +167,7 @@ class VariantController extends BaseController
                         return new ForbiddenResponse($e->getMessage());
                     case 400:
                     default:
-                        return new BadRequestResponse($e->getMessage());
+                        return new UnprocessableEntityResponse($e->getMessage());
                 }
             }
         }, [$request]);
