@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', static function () {
-    return 'Welcome to Grammatista API';
-});
+Route::get('/', '\App\Http\Controllers\Controller@actionIndex');
