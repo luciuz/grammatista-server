@@ -44,8 +44,8 @@ up_app:
 build_app:
 	cd $(APP_DIR) && cp $(APP_SUB_DIR)/.env.example $(APP_SUB_DIR)/.env
 	cd $(APP_DIR) && docker-compose exec -T app composer install && \
-	cd $(APP_DIR) && docker-compose exec -T app php artisan migrate && \
-	cd $(APP_DIR) && docker-compose exec -T app php artisan key:generate & \
+	cd $(APP_DIR) && docker-compose exec -T app php artisan key:generate && \
+	cd $(APP_DIR) && docker-compose exec -T app php artisan migrate & \
 	wait
 
 ## =====================================================
@@ -54,10 +54,10 @@ build_app:
 build_app_prod:
 	cd $(APP_DIR) && cp $(APP_SUB_DIR)/.env.example $(APP_SUB_DIR)/.env
 	cd $(APP_DIR) && docker-compose exec -T app composer install --optimize-autoloader --no-dev && \
+	cd $(APP_DIR) && docker-compose exec -T app php artisan key:generate && \
 	cd $(APP_DIR) && docker-compose exec -T app php artisan config:cache && \
 	cd $(APP_DIR) && docker-compose exec -T app php artisan route:cache && \
-	cd $(APP_DIR) && docker-compose exec -T app php artisan migrate && \
-	cd $(APP_DIR) && docker-compose exec -T app php artisan key:generate & \
+	cd $(APP_DIR) && docker-compose exec -T app php artisan migrate & \
 	wait
 
 down:
