@@ -29,7 +29,7 @@ class ImportLessonValidator extends AbstractValidator
     {
         return [
             self::OPTIONS                                    => 'required|array',
-            self::OPTIONS . '.' . self::OPTION_TITLE         => 'required|string|min:10|max:255',
+            self::OPTIONS . '.' . self::OPTION_TITLE         => 'required|string|max:255',
             self::OPTIONS . '.' . self::OPTION_LOCALE        => 'required|in:' . implode(',', Locale::getAll()),
             self::OPTIONS . '.' . self::OPTION_TEST_DURATION => 'required|integer|min:0',
             self::OPTIONS . '.' . self::OPTION_PUBLISHED_AT  => 'nullable|date_format:' . self::DATE_FORMAT,
