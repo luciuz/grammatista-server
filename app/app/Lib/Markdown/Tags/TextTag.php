@@ -27,4 +27,12 @@ class TextTag extends AbstractTag
         }
         return null;
     }
+
+    /**
+     * @return bool
+     */
+    public function isSet(): bool
+    {
+        return true;
+    }
 }
