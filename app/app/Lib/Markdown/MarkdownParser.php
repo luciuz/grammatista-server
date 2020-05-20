@@ -11,6 +11,7 @@ use App\Lib\Markdown\Tags\ImgTag;
 use App\Lib\Markdown\Tags\LinkTag;
 use App\Lib\Markdown\Tags\ListNumberedTag;
 use App\Lib\Markdown\Tags\ListTag;
+use App\Lib\Markdown\Tags\TableTag;
 use App\Lib\Markdown\Tags\TextTag;
 
 /**
@@ -123,9 +124,8 @@ class MarkdownParser
         if ($result === null) {
             if ($tag->isSet()) {
                 $this->pickSubResult();
-            } else {
-                return;
             }
+            return;
         }
         if ($tag->isSet()) {
             $this->subResult[$tag::getTagName()][] = reset($result);
@@ -144,7 +144,7 @@ class MarkdownParser
     public function pickSubResult(): void
     {
         if ($this->subResult) {
-            $this->result[] = $this->subResult;
+            $this->result[] = $this->convertSubResult($this->subResult);
             $this->subResult = [];
         }
     }
@@ -159,6 +159,22 @@ class MarkdownParser
     }
 
     /**
+     * @param array $subResult
+     * @return array
+     */
+    protected function convertSubResult(array $subResult): array
+    {
+        $tagName = array_key_first($subResult);
+        if ($tagName === TextTag::getTagName()) {
+            $tableResult = TableTag::convertFromText($subResult);
+            if ($tableResult) {
+                return $tableResult;
+            }
+        }
+        return $subResult;
+    }
+
+    /**
      * @param string $line
      * @return AbstractTag
      */
@@ -167,9 +183,9 @@ class MarkdownParser
         $next = false;
         $path = $this->map;
         $tag = $this->textTag;
-        $i = 0;
+        $pos = 0;
         do {
-            $char = mb_substr($line, $i++, 1);
+            $char = mb_substr($line, $pos++, 1);
             if (isset($path[$char])) {
                 $path = $path[$char];
                 if (is_array($path)) {
@@ -181,6 +197,8 @@ class MarkdownParser
             } elseif (isset($path['default'])) {
                 $next = false;
                 $tag = $path['default'];
+            } else {
+                $next = false;
             }
         } while ($next);
         return $tag;
