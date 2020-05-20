@@ -121,7 +121,11 @@ class MarkdownParser
             $result = $tag->parse($line);
         }
         if ($result === null) {
-            return;
+            if ($tag->isSet()) {
+                $this->pickSubResult();
+            } else {
+                return;
+            }
         }
         if ($tag->isSet()) {
             $this->subResult[$tag::getTagName()][] = reset($result);
